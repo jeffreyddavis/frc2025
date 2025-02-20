@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2560763888888877,
+        "y": 7.015798611111111
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2312288314560664,
+        "y": 5.935836380931328
+      },
+      "isLocked": false,
+      "linkedName": "2nd Score TR"
+    },
+    {
+      "anchor": {
+        "x": 3.128819444444032,
+        "y": 4.024999999994426
+      },
+      "prevControl": {
+        "x": 2.7374999999995873,
+        "y": 4.891493055549981
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "GoToL4",
+      "waypointRelativePos": 0.11572700296735905,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "dunk",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.9127324000359621
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -52.733598099022856
+  },
+  "useDefaultConstraints": true
+}

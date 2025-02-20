@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5776969178082192,
+        "y": 0.7193493150684935
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5635416666666653,
+        "y": 2.166232638888888
+      },
+      "isLocked": false,
+      "linkedName": "CoralStation"
+    },
+    {
+      "anchor": {
+        "x": 3.1847222222222213,
+        "y": 3.885243055555555
+      },
+      "prevControl": {
+        "x": 1.3119791666666656,
+        "y": 3.9690972222222216
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "GoToL4",
+      "waypointRelativePos": 0.11572700296735905,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "dunk",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 177.70938995736148
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -125.00000000000001
+  },
+  "useDefaultConstraints": true
+}
