@@ -4,18 +4,17 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
 public class Arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-
   public SparkMax LeftMotor;
+
   public SparkMax RightMotor;
   public SparkMaxConfig LeftMotorConfig;
   public SparkMaxConfig RightMotorConfig;
@@ -28,9 +27,13 @@ public class Arm extends SubsystemBase {
 
   public Arm(Elevator elevator) {
     m_elevator = elevator;
-    LeftMotor = new SparkMax(Constants.Arm.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    
-    RightMotor = new SparkMax(Constants.Arm.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    LeftMotor =
+        new SparkMax(
+            Constants.Arm.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+
+    RightMotor =
+        new SparkMax(
+            Constants.Arm.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     LeftMotorConfig = new SparkMaxConfig();
     LeftMotorConfig.inverted(true);
@@ -40,7 +43,6 @@ public class Arm extends SubsystemBase {
 
     LeftMotor.configure(LeftMotorConfig, null, null);
 
-    
     RightMotorConfig = new SparkMaxConfig();
     RightMotorConfig.inverted(false);
     RightMotorConfig.idleMode(IdleMode.kBrake);
@@ -58,7 +60,7 @@ public class Arm extends SubsystemBase {
    * @return a command
    */
   public boolean isAtLocation() {
-    return (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance );
+    return (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
   }
 
   public double armDegrees() {
@@ -67,10 +69,11 @@ public class Arm extends SubsystemBase {
     while (raw >= 1) raw -= 1; // max degrees will be 359.9-ish, 360 will be 0
     return raw * 360;
   }
+
   public boolean goToLocation(double target) {
     this.targetAngle = target;
     if (isAtLocation()) return true;
-   this.movingToTarget = true;
+    this.movingToTarget = true;
     return false;
   }
 
@@ -107,18 +110,18 @@ public class Arm extends SubsystemBase {
       if (!isAtLocation()) {
 
         if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle) {
-          LeftMotor.set( (armDegrees() < targetAngle) ? Constants.Arm.armSpeed : -Constants.Arm.armSpeed);
+          LeftMotor.set(
+              (armDegrees() < targetAngle) ? Constants.Arm.armSpeed : -Constants.Arm.armSpeed);
         } else {
           stop();
         }
       } else {
         this.movingToTarget = false;
         stop();
-
-      } 
+      }
     }
-
   }
+
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation

@@ -4,33 +4,30 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-
   public SparkFlex Motor;
+
   public SparkFlexConfig MotorConfig;
   public DutyCycleEncoder intakeEncoder;
 
-
   public Intake() {
-    Motor = new SparkFlex(Constants.Intake.Motor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    Motor =
+        new SparkFlex(
+            Constants.Intake.Motor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     MotorConfig = new SparkFlexConfig();
     MotorConfig.inverted(false);
     MotorConfig.idleMode(IdleMode.kBrake);
 
-
     Motor.configure(MotorConfig, null, null);
-
   }
 
   /**
@@ -38,7 +35,6 @@ public class Intake extends SubsystemBase {
    *
    * @return a command
    */
-
   public void stop() {
     Motor.stopMotor();
   }
@@ -53,7 +49,6 @@ public class Intake extends SubsystemBase {
     Motor.configure(MotorConfig, null, null);
   }
 
-
   public void IntakeAlgae() {
     Motor.set(Constants.Intake.intakeAlgaeSpeed);
   }
@@ -62,13 +57,12 @@ public class Intake extends SubsystemBase {
     Motor.set(Constants.Intake.shootAlgaeSpeed);
   }
 
-
   public void testIn() {
-    Motor.set (Constants.Intake.testSpeed);
+    Motor.set(Constants.Intake.testSpeed);
   }
 
   public void testOut() {
-    Motor.set (-Constants.Intake.testSpeed);
+    Motor.set(-Constants.Intake.testSpeed);
   }
 
   public void holdAlgae() {

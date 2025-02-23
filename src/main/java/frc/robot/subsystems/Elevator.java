@@ -4,19 +4,20 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import frc.robot.Constants;
+import frc.robot.addons.PIDMint;
 
 public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
+  public PIDMint ElevatorControl;
 
   public SparkMax leftMotor;
-  public SparkMax rightMotor;  
+  public SparkMax rightMotor;
   public SparkMaxConfig leftMotorConfig;
   public SparkMaxConfig rightMotorConfig;
   public Encoder elevatorEncoder;
@@ -27,7 +28,7 @@ public class Elevator extends SubsystemBase {
   private double zeroOffset = 0;
   private double totalRevolutions = 0;
   private double lastPosition = 0;
-  
+
   public enum Targets {
     Floor,
     Processor,
@@ -40,9 +41,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public Elevator() {
-    leftMotor = new SparkMax(Constants.Elevator.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    rightMotor = new SparkMax(Constants.Elevator.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-
+    leftMotor =
+        new SparkMax(
+            Constants.Elevator.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    rightMotor =
+        new SparkMax(
+            Constants.Elevator.rightMotor,
+            com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    ElevatorControl = new PIDMint(0.03, 0, 0, 100, .2);
     leftMotorConfig = new SparkMaxConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kBrake);
@@ -56,9 +62,7 @@ public class Elevator extends SubsystemBase {
     leftMotor.configure(leftMotorConfig, null, null);
 
     elevatorEncoder = new Encoder(1, 2);
-
   }
-
 
   /**
    * Example command factory method.
@@ -66,29 +70,34 @@ public class Elevator extends SubsystemBase {
    * @return a command
    */
   public boolean isAtLocation() {
-    return (Math.abs((elevatorEncoder.get()) - targetHeight) < Constants.Elevator.heightTolerance );
+    return (Math.abs((elevatorEncoder.get()) - targetHeight) < Constants.Elevator.heightTolerance);
   }
 
   public boolean GoToTarget(Elevator.Targets target) {
-    double targetHeight = 0;
-    switch(target) {
+    double targetHeight = 500; // Neutral Height.
+    switch (target) {
       case Floor:
         targetHeight = Constants.Elevator.SeaFloorHeight;
         break;
       case Processor:
+        targetHeight = Constants.Elevator.ProcessorHeight;
         break;
       case L1:
+        targetHeight = Constants.Elevator.HeightL1;
         break;
       case L2:
+        targetHeight = Constants.Elevator.HeightL2;
         break;
       case L3:
+        targetHeight = Constants.Elevator.HeightL3;
         break;
       case L4:
+        targetHeight = Constants.Elevator.HeightL4;
         break;
       case NET:
+        targetHeight = Constants.Elevator.HeightNET;
         break;
       default:
-
     }
 
     return goToLocation(targetHeight);
@@ -108,7 +117,6 @@ public class Elevator extends SubsystemBase {
   public boolean armClear() {
     return getLocation() >= Constants.Elevator.ArmClearHeight;
   }
-
 
   public void stop() {
     leftMotor.stopMotor();
@@ -133,14 +141,15 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     if (this.movingToTarget) {
       if (!isAtLocation()) {
-        leftMotor.set( (getLocation() < targetHeight) ? Constants.Elevator.elevatorSpeed : -Constants.Elevator.elevatorSpeed);
+
+        double P = ElevatorControl.calculate(getLocation(), targetHeight);
+
+        leftMotor.set(P);
       } else {
         this.movingToTarget = false;
         stop();
-
-      } 
+      }
     }
-
   }
 
   @Override

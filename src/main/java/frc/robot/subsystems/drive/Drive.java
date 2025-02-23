@@ -217,7 +217,6 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
 
-
   public void goBackward(double speed) {
     runVelocity(new ChassisSpeeds(-speed, 0, 0));
   }

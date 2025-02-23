@@ -4,38 +4,35 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Hopper extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-
   public SparkFlex leftMotor;
+
   public SparkFlex rightMotor;
   public SparkFlexConfig leftMotorConfig;
   public SparkFlexConfig rightMotorConfig;
   public DutyCycleEncoder hopperEncoder;
 
-
-
   public Hopper() {
-    leftMotor = new SparkFlex(Constants.Hopper.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    rightMotor = new SparkFlex(Constants.Hopper.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    leftMotor =
+        new SparkFlex(
+            Constants.Hopper.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    rightMotor =
+        new SparkFlex(
+            Constants.Hopper.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     leftMotorConfig = new SparkFlexConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kCoast);
 
     leftMotor.configure(leftMotorConfig, null, null);
-    
 
     rightMotorConfig = new SparkFlexConfig();
     rightMotorConfig.inverted(true);
@@ -49,16 +46,14 @@ public class Hopper extends SubsystemBase {
    *
    * @return a command
    */
-
   public void stop() {
     setSpeed(0);
   }
- 
+
   public void setSpeed(double Speed) {
     leftMotor.set(Speed);
     rightMotor.set(Speed);
-  } 
-
+  }
 
   public void testIn() {
     setSpeed(Constants.Hopper.testSpeed);
