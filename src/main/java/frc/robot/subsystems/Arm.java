@@ -8,22 +8,25 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.addons.PIDMint;
 
 public class Arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public SparkMax LeftMotor;
 
-  public SparkMax RightMotor;
+  //public SparkMax RightMotor;
   public SparkMaxConfig LeftMotorConfig;
-  public SparkMaxConfig RightMotorConfig;
+  //public SparkMaxConfig RightMotorConfig;
   public DutyCycleEncoder armEncoder;
 
   private double targetAngle = 0;
   private boolean movingToTarget = false;
 
   private Elevator m_elevator;
+  private PIDMint armControlMint;
 
   public Arm(Elevator elevator) {
     m_elevator = elevator;
@@ -31,27 +34,29 @@ public class Arm extends SubsystemBase {
         new SparkMax(
             Constants.Arm.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
-    RightMotor =
-        new SparkMax(
-            Constants.Arm.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    //RightMotor =
+    //    new SparkMax(
+    //        Constants.Arm.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     LeftMotorConfig = new SparkMaxConfig();
-    LeftMotorConfig.inverted(true);
+    LeftMotorConfig.inverted(false);
     LeftMotorConfig.idleMode(IdleMode.kBrake);
     LeftMotorConfig.disableFollowerMode();
     LeftMotorConfig.openLoopRampRate(Constants.Arm.rampUpTime);
 
     LeftMotor.configure(LeftMotorConfig, null, null);
 
-    RightMotorConfig = new SparkMaxConfig();
-    RightMotorConfig.inverted(false);
-    RightMotorConfig.idleMode(IdleMode.kBrake);
-    RightMotorConfig.follow(LeftMotor, true);
-    RightMotorConfig.openLoopRampRate(Constants.Arm.rampUpTime);
+    //RightMotorConfig = new SparkMaxConfig();
+    //RightMotorConfig.inverted(false);
+    //RightMotorConfig.idleMode(IdleMode.kBrake);
+    //RightMotorConfig.follow(LeftMotor, true);
+    //RightMotorConfig.openLoopRampRate(Constants.Arm.rampUpTime);
 
-    RightMotor.configure(RightMotorConfig, null, null);
+    //RightMotor.configure(RightMotorConfig, null, null);
 
     armEncoder = new DutyCycleEncoder(Constants.Arm.Encoder);
+
+    armControlMint = new PIDMint(.015, 0, 0, .1, .01);
   }
 
   /**
@@ -71,14 +76,16 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean goToLocation(double target) {
+    SmartDashboard.putNumber("arm Target", target);
     this.targetAngle = target;
-    if (isAtLocation()) return true;
     this.movingToTarget = true;
-    return false;
+    return isAtLocation();
+    
   }
 
   public void stop() {
     LeftMotor.stopMotor();
+    this.movingToTarget = false;
   }
 
   public void testUp() {
@@ -93,33 +100,25 @@ public class Arm extends SubsystemBase {
     LeftMotor.set(Constants.Arm.holdSpeed);
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (this.movingToTarget) {
-      if (!isAtLocation()) {
 
-        if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle) {
-          LeftMotor.set(
-              (armDegrees() < targetAngle) ? Constants.Arm.armSpeed : -Constants.Arm.armSpeed);
-        } else {
-          stop();
-        }
-      } else {
-        this.movingToTarget = false;
-        stop();
-      }
+    if (!this.movingToTarget) { 
+      stop();
+      return;
     }
+
+
+    if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle || targetAngle == Constants.Arm.startingPosition) {
+      double output = armControlMint.calculate(armDegrees(), targetAngle);
+      SmartDashboard.putNumber("arm output", output);
+      LeftMotor.set(output);
+    }
+        
+      
+    
   }
 
   @Override

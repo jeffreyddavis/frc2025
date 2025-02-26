@@ -58,21 +58,22 @@ public final class Constants {
   }
 
   public static class Arm {
-    public static final int leftMotor = 6;
-    public static final int rightMotor = 7;
+    //public static final int rightMotor = 6;
+    public static final int leftMotor = 7;
 
     public static final int Encoder = 0;
     public static final double angleTolerance = .5;
 
     public static final double armSpeed = .05;
-    public static final double rampUpTime = 1;
+    public static final double rampUpTime = 0;
     public static final double testSpeed = 0.2;
     public static final double holdSpeed = .03;
-    public static final double encoderOffset = .363;
+    public static final double encoderOffset = .41;
 
     public static final double DownAngle = 0;
     public static final double ScoringAngle = 135;
     public static final double ThrowingAngle = 160;
+    public static final double startingPosition = 168.5;
     public static final double ReleasingAngle = 135;
     public static final double StraightOut = 80;
     public static final double Max = 165;
@@ -81,11 +82,13 @@ public final class Constants {
   public static class Intake {
     public static final int Motor = 10;
 
-    public static final double intakeAlgaeSpeed = .1;
+    public static final double intakeAlgaeSpeed = 1;
     public static final double shootAlgaeSpeed = -1;
     public static final double shootCoralSpeed = -.1;
     public static final double testSpeed = 1;
     public static final double holdSpeed = .1;
+    public static final int intakeLimitSwitchId = 0;
+    public static final int intakeLimitSwitch2Id = 1;
   }
 
   public static class Elevator {
@@ -101,6 +104,7 @@ public final class Constants {
 
     public static final double elevatorSpeed = .3;
     public static final double testSpeed = .5;
+
     public static final double StaticHeight = 0;
     public static final double ArmClearHeight = 10;
     public static final double ProcessorHeight = 300;
@@ -111,6 +115,9 @@ public final class Constants {
     public static final double HeightL3 = 90;
     public static final double HeightL4 = 120;
     public static final double HeightNET = 150;
+    public static final double HeightAlgaeLow = 150;
+    public static final double HeightAlgaeHi = 500;
+
 
     public static final double maxHeight = 4.3;
   }

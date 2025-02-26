@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,6 +19,9 @@ public class Intake extends SubsystemBase {
 
   public SparkFlexConfig MotorConfig;
   public DutyCycleEncoder intakeEncoder;
+
+  private final DigitalInput m_IntakeLimitSwitch = new DigitalInput(Constants.Intake.intakeLimitSwitchId);
+  private final DigitalInput m_IntakeLimitSwitch2 = new DigitalInput(Constants.Intake.intakeLimitSwitch2Id);
 
   public Intake() {
     Motor =
@@ -39,6 +44,10 @@ public class Intake extends SubsystemBase {
     Motor.stopMotor();
   }
 
+  public boolean SeesCoral() {
+    return m_IntakeLimitSwitch.get() || m_IntakeLimitSwitch2.get();
+  }
+
   public void brake() {
     MotorConfig.idleMode(IdleMode.kBrake);
     Motor.configure(MotorConfig, null, null);
@@ -49,7 +58,7 @@ public class Intake extends SubsystemBase {
     Motor.configure(MotorConfig, null, null);
   }
 
-  public void IntakeAlgae() {
+  public void Intake() {
     Motor.set(Constants.Intake.intakeAlgaeSpeed);
   }
 

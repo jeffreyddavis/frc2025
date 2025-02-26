@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.addons.PIDMint;
@@ -23,11 +24,7 @@ public class Elevator extends SubsystemBase {
   public Encoder elevatorEncoder;
 
   private double targetHeight = 0;
-  private boolean movingToTarget = false;
-
-  private double zeroOffset = 0;
-  private double totalRevolutions = 0;
-  private double lastPosition = 0;
+  private boolean movingToTarget = true;
 
   public enum Targets {
     Floor,
@@ -37,6 +34,8 @@ public class Elevator extends SubsystemBase {
     L2,
     L3,
     L4,
+    AlgaeLow,
+    AlgaeHi,
     NET
   }
 
@@ -48,7 +47,7 @@ public class Elevator extends SubsystemBase {
         new SparkMax(
             Constants.Elevator.rightMotor,
             com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    ElevatorControl = new PIDMint(0.03, 0, 0, 100, .2);
+    ElevatorControl = new PIDMint(0.03, 0, 0, Constants.Elevator.heightTolerance, .2);
     leftMotorConfig = new SparkMaxConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kBrake);
@@ -62,19 +61,17 @@ public class Elevator extends SubsystemBase {
     leftMotor.configure(leftMotorConfig, null, null);
 
     elevatorEncoder = new Encoder(1, 2);
+
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
+  
   public boolean isAtLocation() {
     return (Math.abs((elevatorEncoder.get()) - targetHeight) < Constants.Elevator.heightTolerance);
   }
 
   public boolean GoToTarget(Elevator.Targets target) {
-    double targetHeight = 500; // Neutral Height.
+    SmartDashboard.putString("Elevator Target", target.name());
+    double targetHeight = 0; 
     switch (target) {
       case Floor:
         targetHeight = Constants.Elevator.SeaFloorHeight;
@@ -97,17 +94,23 @@ public class Elevator extends SubsystemBase {
       case NET:
         targetHeight = Constants.Elevator.HeightNET;
         break;
+      case AlgaeHi:
+        targetHeight = Constants.Elevator.HeightAlgaeHi;
+        break;
+      case AlgaeLow:
+        targetHeight = Constants.Elevator.HeightAlgaeLow;
+        break;
       default:
+        targetHeight = Constants.Elevator.SeaFloorHeight;
     }
-
+    SmartDashboard.putNumber("Elevator Target Height", targetHeight);
     return goToLocation(targetHeight);
   }
 
   public boolean goToLocation(double targetHeight) {
     this.targetHeight = targetHeight;
-    if (isAtLocation()) return true;
     this.movingToTarget = true;
-    return false;
+    return isAtLocation();
   }
 
   public double getLocation() {
@@ -119,6 +122,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void stop() {
+    this.movingToTarget = false;
     leftMotor.stopMotor();
     rightMotor.stopMotor();
   }
@@ -128,28 +132,20 @@ public class Elevator extends SubsystemBase {
     this.movingToTarget = true;
   }
 
-  public void testUp() {
-    leftMotor.set(Constants.Elevator.testSpeed);
-  }
-
-  public void testDown() {
-    leftMotor.set(-Constants.Elevator.testSpeed);
-  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     if (this.movingToTarget) {
-      if (!isAtLocation()) {
 
-        double P = ElevatorControl.calculate(getLocation(), targetHeight);
-
-        leftMotor.set(P);
-      } else {
-        this.movingToTarget = false;
-        stop();
-      }
+      double P = ElevatorControl.calculate(getLocation(), targetHeight);
+      leftMotor.set(P);
+    } else {
+      stop();
     }
+    
+
+
   }
 
   @Override

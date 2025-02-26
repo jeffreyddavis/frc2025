@@ -45,6 +45,7 @@ public class RobotContainer {
   public final Climber CageAscender = new Climber();
 
   public final Drive drive;
+
   //public final Vision vision;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -134,16 +135,27 @@ public class RobotContainer {
     // Configure the trigger bindings
     defaultCommands();
     configureBindings();
+    //SeaElevator.GoToTarget(Elevator.Targets.Floor);
+    theArm.goToLocation(Constants.Arm.startingPosition);
   }
 
   private void defaultCommands() {
     // SeaElevator.setDefaultCommand(Commands.run(() -> SeaElevator.GoToTarget(Elevator.Targets.L1),
     // SeaElevator));
     SeaElevator.setDefaultCommand(Commands.run(() -> SeaElevator.stop(), SeaElevator));
-    theArm.setDefaultCommand(Commands.run(() -> theArm.stop(), theArm));
+    //theArm.setDefaultCommand(Commands.run(() -> theArm.stop(), theArm));
     AlgaeYoinker.setDefaultCommand(Commands.run(() -> AlgaeYoinker.stop(), AlgaeYoinker));
     // MCHopper.setDefaultCommand(Commands.run(() -> MCHopper.stop(), MCHopper));
     CageAscender.setDefaultCommand(Commands.run(() -> CageAscender.idle(), CageAscender));
+
+    
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -m_driverController.getRawAxis(0),
+            () -> -m_driverController.getRawAxis(1),
+            () -> -m_driverController.getRawAxis(2)));
   }
 
   private void configureBindings() {
@@ -171,12 +183,9 @@ public class RobotContainer {
         .rightTrigger()
         .whileTrue(Commands.run(() -> CageAscender.testUp(), CageAscender));
 
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -m_testController.getLeftY(),
-            () -> -m_testController.getLeftX(),
-            () -> -m_testController.getRightX()));
+    m_driverController
+      .button(1)
+      .whileTrue(new StationIntake(AlgaeYoinker));
 
     // m_driverController.button(Constants.controller.ShootButton).onTrue(new Dunk(AlgaeYoinker,
     // SeaElevator, swerve));
