@@ -25,30 +25,30 @@ public class Climber extends SubsystemBase {
   private boolean movingToTarget = false;
 
   public Climber() {
-    //LeftMotor =
-    //    new SparkMax(
-    //        Constants.Climber.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+    LeftMotor =
+        new SparkMax(
+            Constants.Climber.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     RightMotor =
         new SparkMax(
             Constants.Climber.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
-    //LeftMotorConfig = new SparkMaxConfig();
-    //LeftMotorConfig.inverted(true);
-    //LeftMotorConfig.idleMode(IdleMode.kBrake);
-    //LeftMotorConfig.disableFollowerMode();
+    LeftMotorConfig = new SparkMaxConfig();
+    LeftMotorConfig.inverted(true);
+    LeftMotorConfig.idleMode(IdleMode.kBrake);
+    LeftMotorConfig.disableFollowerMode();
     //LeftMotorConfig.openLoopRampRate(Constants.Climber.rampUpTime);
 
-    //LeftMotor.configure(LeftMotorConfig, null, null);
+    LeftMotor.configure(LeftMotorConfig, null, null);
 
-    //leftServo = new Servo(1);
+    leftServo = new Servo(1);
     rightServo = new Servo(0);
 
     RightMotorConfig = new SparkMaxConfig();
     RightMotorConfig.inverted(false);
     RightMotorConfig.idleMode(IdleMode.kBrake);
-    RightMotorConfig.disableFollowerMode();
-    RightMotorConfig.openLoopRampRate(Constants.Climber.rampUpTime);
+    RightMotorConfig.follow(LeftMotor, true);
+    //RightMotorConfig.openLoopRampRate(Constants.Climber.rampUpTime);
 
     RightMotor.configure(RightMotorConfig, null, null);
 
@@ -85,28 +85,30 @@ public class Climber extends SubsystemBase {
   }
 
   public void stop() {
+    LeftMotor.stopMotor();
     RightMotor.stopMotor();
   }
 
   public void testUp() {
-    RightMotor.set(Constants.Climber.testSpeed);
+    LeftMotor.set(Constants.Climber.testSpeed);
   }
 
   public void testDown() {
-    RightMotor.set(-Constants.Climber.testSpeed);
+    LeftMotor.set(-Constants.Climber.testSpeed);
   }
 
   public void releaseCage() {
     rightServo.setPosition(.7);
+    leftServo.setPosition(0);
   }
 
   public void enableClimbing() {
-    //leftServo.setPosition(1);
+    leftServo.setPosition(1);
     rightServo.setPosition(0);
   }
 
   public void hold() {
-    RightMotor.set(Constants.Climber.holdSpeed);
+    LeftMotor.set(Constants.Climber.holdSpeed);
   }
 
   /**

@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -35,6 +37,9 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+  @AutoLogOutput
+  public boolean isAllowedToSend = true;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -65,7 +70,10 @@ public class Vision extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
+  public void periodic() {/*
+    return;  //disable for now
+    if (!isAllowedToSend) return;
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
@@ -103,14 +111,15 @@ public class Vision extends SubsystemBase {
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-                || Math.abs(observation.pose().getZ())
-                    > maxZError // Must have realistic Z coordinate
+         //       || Math.abs(observation.pose().getZ())
+         //           > maxZError // Must have realistic Z coordinate
 
                 // Must be within the field boundaries
-                || observation.pose().getX() < 0.0
-                || observation.pose().getX() > aprilTagLayout.getFieldLength()
-                || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+            //    || observation.pose().getX() < 0.0
+            //    || observation.pose().getX() > aprilTagLayout.getFieldLength()
+            //    || observation.pose().getY() < 0.0
+            //    || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+            ;
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -176,6 +185,8 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+
+         */
   }
 
   @FunctionalInterface

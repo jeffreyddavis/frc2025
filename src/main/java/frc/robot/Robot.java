@@ -16,7 +16,13 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -27,6 +33,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import frc.robot.addons.LocalADStarAK;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -40,6 +47,9 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
 
+    CameraServer.startAutomaticCapture();
+
+    DriverStation.silenceJoystickConnectionWarning(true);
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
@@ -86,6 +96,11 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
   }
 
+  @Override
+  public void robotInit() {
+    Pathfinding.setPathfinder(new LocalADStarAK());
+  }
+
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
@@ -104,9 +119,9 @@ public class Robot extends LoggedRobot {
 
     // Logger.recordOutput("Rooobooot", new Pose3d(robotContainer.drive.getPose()));
 
-    SmartDashboard.putBoolean("Insanity is connected", robotContainer.insanity.connected());
-    SmartDashboard.putNumber("Arm Position", robotContainer.theArm.armDegrees());
-    SmartDashboard.putNumber("Elevator Position:", robotContainer.SeaElevator.getLocation());
+    SmartDashboard.putBoolean("Insanity is connected", robotContainer.insanity.isConnected());
+    //SmartDashboard.putNumber("Arm Position", robotContainer.theArm.armDegrees());
+    //SmartDashboard.putNumber("Elevator Position:", robotContainer.SeaElevator.getLocation());
   }
 
   /** This function is called once when the robot is disabled. */
@@ -126,11 +141,18 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  robotContainer.drive.addVisionMeasurement(
+      robotContainer.insanity.getRobotPose(),
+      Timer.getFPGATimestamp() - .001, 
+      VecBuilder.fill( 1, 1, 1)
+    );
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -142,11 +164,22 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    robotContainer.onStart();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber("FPGA timestamp", Timer.getFPGATimestamp());
+    if (robotContainer.vision.isAllowedToSend) return;
+
+    robotContainer.drive.addVisionMeasurement(
+      robotContainer.insanity.getRobotPose(),
+      Timer.getFPGATimestamp() - .01, 
+      VecBuilder.fill( 1, 1, 1)
+    );
+
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override

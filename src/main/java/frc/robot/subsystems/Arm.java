@@ -4,14 +4,18 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.addons.PIDMint;
+import edu.wpi.first.math.util.Units;
 
 public class Arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -22,11 +26,17 @@ public class Arm extends SubsystemBase {
   //public SparkMaxConfig RightMotorConfig;
   public DutyCycleEncoder armEncoder;
 
+  @AutoLogOutput
   private double targetAngle = 0;
+  @AutoLogOutput
   private boolean movingToTarget = false;
 
   private Elevator m_elevator;
   private PIDMint armControlMint;
+
+
+  @AutoLogOutput
+  public boolean MaxSpeedMode = false;
 
   public Arm(Elevator elevator) {
     m_elevator = elevator;
@@ -56,7 +66,7 @@ public class Arm extends SubsystemBase {
 
     armEncoder = new DutyCycleEncoder(Constants.Arm.Encoder);
 
-    armControlMint = new PIDMint(.015, 0, 0, .1, .01);
+    armControlMint = new PIDMint(.007, 0, 0, 0, 0);
   }
 
   /**
@@ -64,10 +74,36 @@ public class Arm extends SubsystemBase {
    *
    * @return a command
    */
+
+  @AutoLogOutput
+  public String CurrentCommand() {
+     return this.getCurrentCommand() != null ? this.getCurrentCommand().getName() : "None";
+  }
+
+  @AutoLogOutput
   public boolean isAtLocation() {
+
+    boolean result = (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
+    SmartDashboard.putBoolean("checking is at location", result);
+    SmartDashboard.putNumber("checked at", Timer.getFPGATimestamp());
     return (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
   }
 
+  @AutoLogOutput
+  public boolean isNearLocation() {
+    return (Math.abs(armDegrees() - targetAngle) < (Constants.Arm.angleTolerance*3));
+  }
+
+  public void setMaxSpeedMode(boolean max) {
+    this.MaxSpeedMode = max;
+  }
+
+  public void dunk() {
+    this.targetAngle = armDegrees() - 30;
+    this.movingToTarget = true;
+  }
+
+  @AutoLogOutput
   public double armDegrees() {
     double raw = armEncoder.get() + Constants.Arm.encoderOffset;
     while (raw < 0) raw += 1;
@@ -84,7 +120,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void stop() {
-    LeftMotor.stopMotor();
+    LeftMotor.set(Constants.Arm.gravityFF * sineOfAngle());
     this.movingToTarget = false;
   }
 
@@ -99,23 +135,36 @@ public class Arm extends SubsystemBase {
   public void hold() {
     LeftMotor.set(Constants.Arm.holdSpeed);
   }
+  @AutoLogOutput
+  public double sineOfAngle(){
+    return Math.sin(Units.degreesToRadians(armDegrees()));
+  }
+  @AutoLogOutput
+  public double calculateOutput() {
+    double output = armControlMint.calculate(armDegrees(), targetAngle);
 
+
+    output += (Constants.Arm.gravityFF * sineOfAngle());
+
+    if (this.MaxSpeedMode) output = Math.signum(output);
+    return output;
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
+
     if (!this.movingToTarget) { 
-      stop();
+      //stop();
       return;
     }
 
 
-    if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle || targetAngle == Constants.Arm.startingPosition) {
-      double output = armControlMint.calculate(armDegrees(), targetAngle);
-      SmartDashboard.putNumber("arm output", output);
-      LeftMotor.set(output);
-    }
+    //if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle || targetAngle == Constants.Arm.startingPosition) {
+      
+      LeftMotor.set(calculateOutput());
+    //}
         
       
     

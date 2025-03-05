@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import javax.crypto.SealedObject;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.QuestNav;
+import frc.robot.Constants;
 import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
@@ -33,20 +40,20 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  // public final QuestNav NavigationSystem = new QuestNav();
 
   public final Elevator SeaElevator = new Elevator();
   public final Arm theArm = new Arm(SeaElevator);
   public final Intake AlgaeYoinker = new Intake();
   private final SendableChooser<Command> autoChooser;
   public final QuestNav insanity = new QuestNav();
-  // public final Hopper MCHopper = new Hopper();
   public final Climber CageAscender = new Climber();
 
   public final Drive drive;
 
-  //public final Vision vision;
+  public final Vision vision;
+
+  @AutoLogOutput
+  public int currentTargetLevel = 4;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandJoystick m_driverController =
@@ -58,12 +65,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    NamedCommands.registerCommand("GoToL1", new GoToScore(theArm, SeaElevator, Targets.L1));
-    NamedCommands.registerCommand("score", new score(AlgaeYoinker));
-
-    NamedCommands.registerCommand("GoToL4", new GoToScore(theArm, SeaElevator, Targets.L4));
-    NamedCommands.registerCommand("dunk", new DunkAuto(AlgaeYoinker, SeaElevator, null));
-    NamedCommands.registerCommand("GoToRest", new GoToRest(theArm, SeaElevator));
 
     switch (Constants.currentMode) {
       case REAL:
@@ -77,15 +78,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-//        vision =
-//            new Vision(
-//                drive::addVisionMeasurement,
-//                new VisionIOPhotonVision(
-//                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-//                new VisionIOPhotonVision(
-//                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),
- //               new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-  //              new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                /*new VisionIOPhotonVision(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),*/
+                new VisionIOPhotonVision(
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation) );
 
         break;
 
@@ -99,15 +100,15 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-/*
+
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+               // new VisionIOPhotonVisionSim(
+               //     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
- */
+ 
         break;
 
       default:
@@ -119,10 +120,22 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-   //     vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         break;
     }
+
+    
+    NamedCommands.registerCommand("GoToL1", new GoToL1(theArm, SeaElevator));
+   // NamedCommands.registerCommand("score", new score(AlgaeYoinker));
+
+    NamedCommands.registerCommand("GoToL4", new GoToL4(theArm, SeaElevator));
+    
+    NamedCommands.registerCommand("GoToL3", new GoToL3(theArm, SeaElevator));
+    NamedCommands.registerCommand("dunk", new Dunk(AlgaeYoinker, SeaElevator, drive, theArm));
+    NamedCommands.registerCommand("intake", new StationIntake(AlgaeYoinker, theArm, SeaElevator));
+    NamedCommands.registerCommand("resetQuest", Commands.runOnce(() -> resetInsanity()));
+    NamedCommands.registerCommand("Stow", new Stow(theArm, SeaElevator, AlgaeYoinker));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -132,74 +145,103 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
+
+    onStart();
     // Configure the trigger bindings
     defaultCommands();
     configureBindings();
-    //SeaElevator.GoToTarget(Elevator.Targets.Floor);
-    theArm.goToLocation(Constants.Arm.startingPosition);
+    
+  }
+
+  public void onStart() {
+    theArm.stop();
+    SeaElevator.stop();
+    AlgaeYoinker.stop();
+
   }
 
   private void defaultCommands() {
-    // SeaElevator.setDefaultCommand(Commands.run(() -> SeaElevator.GoToTarget(Elevator.Targets.L1),
-    // SeaElevator));
-    SeaElevator.setDefaultCommand(Commands.run(() -> SeaElevator.stop(), SeaElevator));
-    //theArm.setDefaultCommand(Commands.run(() -> theArm.stop(), theArm));
-    AlgaeYoinker.setDefaultCommand(Commands.run(() -> AlgaeYoinker.stop(), AlgaeYoinker));
-    // MCHopper.setDefaultCommand(Commands.run(() -> MCHopper.stop(), MCHopper));
+
     CageAscender.setDefaultCommand(Commands.run(() -> CageAscender.idle(), CageAscender));
 
-    
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -m_driverController.getRawAxis(0),
             () -> -m_driverController.getRawAxis(1),
+            () -> -m_driverController.getRawAxis(0),
             () -> -m_driverController.getRawAxis(2)));
   }
 
+  public void resetInsanity() {
+    insanity.resetPose(drive.getPose());
+    vision.isAllowedToSend = false;
+  }
+
+  public void toggleVistion() {
+    vision.isAllowedToSend = !vision.isAllowedToSend;
+  }
+
+
+
   private void configureBindings() {
 
-    m_testController.a().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
-    //  m_testController.x().whileTrue(Commands.run(() -> SeaElevator.testUp(), SeaElevator));
 
-    // m_testController.y().whileTrue(Commands.run(() -> SeaElevator.testDown(), SeaElevator));
-    m_testController.povUp().whileTrue(Commands.run(() -> AlgaeYoinker.testIn(), AlgaeYoinker));
-    m_testController.povDown().whileTrue(Commands.run(() -> AlgaeYoinker.testOut(), AlgaeYoinker));
+     
+
+
+    m_driverController.button(5).onTrue(new GetLowAlgae(theArm, AlgaeYoinker, SeaElevator));
+    m_driverController.button(6).onTrue(new GetHighAlgae(theArm, AlgaeYoinker, SeaElevator));
+    m_driverController.button(7).onTrue(new AlgaeProcessor(theArm, AlgaeYoinker, SeaElevator)); 
+   // m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
+
+   m_driverController.button(4).onTrue(new Stow(theArm, SeaElevator, AlgaeYoinker));
+   m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
+   
+   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, drive, theArm));
+
+   m_driverController.povUp().onTrue(Commands.runOnce(() -> {
+    this.currentTargetLevel+=1;
+    if (this.currentTargetLevel > 4) this.currentTargetLevel = 1;
+   } ).andThen(new GoToTarget(this, theArm, SeaElevator)));
+
+   m_driverController.povDown().onTrue(Commands.runOnce(() -> {
+    this.currentTargetLevel-=1;
+    if (this.currentTargetLevel < 1) this.currentTargetLevel = 4;
+   } ).andThen(new GoToTarget(this, theArm, SeaElevator)));
+
+   m_driverController
+      .button(2)
+      .onTrue(new StationIntake(AlgaeYoinker, theArm, SeaElevator));
+   
+
+   m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
+
+   m_testController.y().whileTrue(Commands.run(() -> SeaElevator.testUp(), theArm));
+   m_testController.x().whileTrue(Commands.run(() -> SeaElevator.testDown(), theArm));
+  
+   m_testController.b().whileTrue(Commands.run(() -> theArm.testUp(), theArm));
+   
+   m_testController.a().whileTrue(Commands.run(() -> theArm.testDown(), theArm));
+
 
     m_testController
         .povRight()
         .whileTrue(Commands.run(() -> AlgaeYoinker.holdAlgae(), AlgaeYoinker));
 
-    m_testController.povLeft().whileTrue(Commands.run(() -> theArm.hold(), theArm));
-
-    // m_testController.leftBumper().whileTrue(Commands.run(() -> MCHopper.testIn(), MCHopper));
-    // m_testController.rightBumper().whileTrue(Commands.run(() -> MCHopper.testOut(), MCHopper));
-
     m_testController
-        .leftTrigger()
+        .pov(0)
         .whileTrue(Commands.run(() -> CageAscender.testDown(), CageAscender));
     m_testController
-        .rightTrigger()
+        .pov(180)
         .whileTrue(Commands.run(() -> CageAscender.testUp(), CageAscender));
 
-    m_driverController
-      .button(1)
-      .whileTrue(new StationIntake(AlgaeYoinker));
+    
 
-    // m_driverController.button(Constants.controller.ShootButton).onTrue(new Dunk(AlgaeYoinker,
-    // SeaElevator, swerve));
-    // m_driverController.button(Constants.controller.EjectButton).onTrue(new Eject(AlgaeYoinker));
-    // m_driverController.button(Constants.controller.GoToL1).onTrue(new GoToScore(theArm,
-    // SeaElevator, Targets.L1));
-    // m_driverController.button(Constants.controller.GoToL2).onTrue(new GoToScore(theArm,
-    // SeaElevator, Targets.L2));
-    // m_driverController.button(Constants.controller.GoToL3).onTrue(new GoToScore(theArm,
-    // SeaElevator, Targets.L3));
-    // m_driverController.button(Constants.controller.GoToL4).onTrue(new GoToScore(theArm,
-    // SeaElevator, Targets.L4));
-    // m_driverController.button(Constants.controller.ThrowAlgaeTheButton).onTrue(new
-    // ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
+    m_driverController
+      .button(14)
+      .onTrue(new Eject(AlgaeYoinker));
+
   }
 
   /**
@@ -211,7 +253,7 @@ public class RobotContainer {
   // ...
 
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
+    return autoChooser.getSelected();
+    //return null;
   }
 }

@@ -43,9 +43,6 @@ public final class Constants {
     public static final int kTestingControllerPort = 1;
   }
 
-  public static class PhotonCamera {
-    public static final Transform3d cameraOffset = new Transform3d(50, 50, 50, new Rotation3d());
-  }
 
   public static class controller {
     public static final int ShootButton = 1;
@@ -62,21 +59,29 @@ public final class Constants {
     public static final int leftMotor = 7;
 
     public static final int Encoder = 0;
-    public static final double angleTolerance = .5;
+    public static final double angleTolerance = 3;
+    public static final double gravityFF = .025;
 
     public static final double armSpeed = .05;
-    public static final double rampUpTime = 0;
+    public static final double rampUpTime = .5;
     public static final double testSpeed = 0.2;
     public static final double holdSpeed = .03;
-    public static final double encoderOffset = .41;
+    public static final double encoderOffset = .75;
 
-    public static final double DownAngle = 0;
-    public static final double ScoringAngle = 135;
     public static final double ThrowingAngle = 160;
-    public static final double startingPosition = 168.5;
-    public static final double ReleasingAngle = 135;
-    public static final double StraightOut = 80;
-    public static final double Max = 165;
+    public static final double WindUpAngle = 30;
+
+    public static final double ScoringAngle = 135;
+    public static final double HighScoringAngle = 150;
+    public static final double intakeAngle = 178;
+    
+    public static final double startingPosition = 172;
+    public static final double StraightOut = 85;
+    public static final double Processor = 112;
+    public static final double GetAlgaeAngle = 115;
+    public static final double CarryAngle = 162;
+    public static final double SafeCarryAngle = 145;
+    public static final double Max = 190;
   }
 
   public static class Intake {
@@ -84,11 +89,11 @@ public final class Constants {
 
     public static final double intakeAlgaeSpeed = 1;
     public static final double shootAlgaeSpeed = -1;
-    public static final double shootCoralSpeed = -.1;
+    public static final double shootCoralSpeed = -.35;
     public static final double testSpeed = 1;
-    public static final double holdSpeed = .1;
-    public static final int intakeLimitSwitchId = 0;
-    public static final int intakeLimitSwitch2Id = 1;
+    public static final double holdSpeed = .15;
+    public static final int intakeLimitSwitchId = 4;
+    public static final int intakeLimitSwitch2Id = 5;
   }
 
   public static class Elevator {
@@ -96,42 +101,43 @@ public final class Constants {
     public static final int rightMotor = 3;
 
     public static final int elevatorEncoder = 1;
-    public static final double heightTolerance = .5;
-    public static final double encoderOffset =
-        -.0394; // This offset consistently appears every init.
-    public static final double distanceMultiple =
-        100; // Give us distances in easier to read whole numbers
+    public static final double heightTolerance = 50;
 
     public static final double elevatorSpeed = .3;
-    public static final double testSpeed = .5;
+    public static final double testSpeed = .2;
+    public static final double gravityFF = .075;
 
     public static final double StaticHeight = 0;
+    public static final double IntakeHeight = 250;
     public static final double ArmClearHeight = 10;
     public static final double ProcessorHeight = 300;
-    public static final double SeaFloorHeight = 0;
-    public static final double DunkDistance = 10;
-    public static final double HeightL1 = 200;
-    public static final double HeightL2 = 60;
-    public static final double HeightL3 = 90;
-    public static final double HeightL4 = 120;
-    public static final double HeightNET = 150;
-    public static final double HeightAlgaeLow = 150;
-    public static final double HeightAlgaeHi = 500;
+    public static final double SeaFloorHeight = 200;
+    public static final double DunkDistance = 500;
+    public static final double HeightL1 = 250;
+    public static final double HeightL2 = 3000;
+    public static final double HeightL3 = 6500;
+    public static final double HeightL4 = 10000;
+    public static final double HeightNET = 9600;
+    public static final double MaxSafeHeight = 3200;
+    public static final double MinSafeHeight = 4200;
+    public static final double StowHeight = 2000;
+    public static final double HeightAlgaeLow = 3200;
+    public static final double HeightAlgaeHi = 6800;
 
 
     public static final double maxHeight = 4.3;
   }
 
   public static class Climber {
-    //public static final int leftMotor = 22;
+    public static final int leftMotor = 22;
     public static final int rightMotor = 23;
 
     public static final int Encoder = 0;
     public static final double angleTolerance = .5;
 
     public static final double Speed = .05;
-    public static final double rampUpTime = 0;
-    public static final double testSpeed = .50;
+    public static final double rampUpTime = 2;
+    public static final double testSpeed = .8;
     public static final double holdSpeed = .03;
     public static final double encoderOffset = .363;
 

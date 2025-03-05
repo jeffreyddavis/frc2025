@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "GoToL1"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Basic Auto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "dunk"
           }
         }
       ]

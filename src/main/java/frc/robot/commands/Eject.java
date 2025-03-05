@@ -9,6 +9,12 @@ public class Eject extends SequentialCommandGroup {
   public Eject(Intake intake) {
 
     addRequirements(intake);
-    addCommands(Commands.runOnce(() -> intake.ShootAlgae(), intake));
+    addCommands(
+      Commands.runOnce(() -> intake.ShootAlgae(), intake),
+      Commands.waitSeconds(.5),
+      Commands.runOnce(() -> intake.stop(), intake)
+
+    );
+
   }
 }

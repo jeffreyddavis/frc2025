@@ -18,23 +18,26 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
+import static edu.wpi.first.math.util.Units.inchesToMeters;
+
+
 public class VisionConstants {
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "ReefCam1";
-  public static String camera1Name = "ReefCam2";
-  public static String camera2Name = "CoralStationCam";
-  public static String camera3Name = "ScoringCam";
+  //public static String camera0Name = "ReefCamLeft";
+  public static String camera1Name = "ReefCamRight";
+  public static String camera2Name = "limelight-sky";
+  public static String camera3Name = "limelight-score";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, 0, 0.0));
+  //public static Transform3d robotToCamera0 =
+ //     new Transform3d(inchesToMeters(11.25), inchesToMeters(13), inchesToMeters(9.5), new Rotation3d(0.0, 0, 0));
   public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, 0, 0.0));
+      new Transform3d(-inchesToMeters(10), -inchesToMeters(18), inchesToMeters(14.25), new Rotation3d(0.0, 0, Math.toRadians(3)));
   // public static Transform3d robotToCamera2 =
   // new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
   // public static Transform3d robotToCamera3 =
@@ -53,8 +56,8 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0, // Camera 0
-        1.0, // Camera 1,
+      //  1.0, // Camera 0
+        2.0, // Camera 1,
         1.0, // Camera 2,
         1.0 // Camera 3
       };

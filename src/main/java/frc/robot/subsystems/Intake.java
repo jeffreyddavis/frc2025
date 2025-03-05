@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean SeesCoral() {
-    return m_IntakeLimitSwitch.get() || m_IntakeLimitSwitch2.get();
+    return !m_IntakeLimitSwitch.get() || !m_IntakeLimitSwitch2.get();
   }
 
   public void brake() {
@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
     Motor.configure(MotorConfig, null, null);
   }
 
-  public void Intake() {
+  public void DoIntake() {
     Motor.set(Constants.Intake.intakeAlgaeSpeed);
   }
 
@@ -86,10 +86,6 @@ public class Intake extends SubsystemBase {
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
 
   @Override
   public void periodic() {

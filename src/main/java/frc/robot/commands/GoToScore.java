@@ -29,7 +29,7 @@ public class GoToScore extends SequentialCommandGroup {
             Commands.waitUntil(() -> elevator.isAtLocation()));
       }
       addCommands(
-          Commands.runOnce(() -> arm.goToLocation(Constants.Arm.DownAngle), arm),
+          Commands.runOnce(() -> arm.goToLocation(Constants.Arm.CarryAngle), arm),
           Commands.waitUntil(() -> arm.isAtLocation()),
           Commands.runOnce(() -> elevator.GoToTarget(target), elevator));
     }

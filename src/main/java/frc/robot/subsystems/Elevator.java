@@ -4,9 +4,13 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,8 +27,12 @@ public class Elevator extends SubsystemBase {
   public SparkMaxConfig rightMotorConfig;
   public Encoder elevatorEncoder;
 
+  @AutoLogOutput
   private double targetHeight = 0;
-  private boolean movingToTarget = true;
+  @AutoLogOutput
+  private boolean movingToTarget = false;
+  @AutoLogOutput
+  private boolean MaxSpeedMode = false;
 
   public enum Targets {
     Floor,
@@ -47,15 +55,19 @@ public class Elevator extends SubsystemBase {
         new SparkMax(
             Constants.Elevator.rightMotor,
             com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    ElevatorControl = new PIDMint(0.03, 0, 0, Constants.Elevator.heightTolerance, .2);
+    ElevatorControl = new PIDMint(0.00008, 0, 0, 50, .1);
     leftMotorConfig = new SparkMaxConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kBrake);
+    leftMotorConfig.openLoopRampRate(0);
 
     rightMotorConfig = new SparkMaxConfig();
     rightMotorConfig.inverted(true);
     rightMotorConfig.follow(leftMotor, true);
+    //rightMotorConfig.disableFollowerMode();
     rightMotorConfig.idleMode(IdleMode.kBrake);
+    rightMotorConfig.openLoopRampRate(0);
+
 
     rightMotor.configure(rightMotorConfig, null, null);
     leftMotor.configure(leftMotorConfig, null, null);
@@ -64,9 +76,14 @@ public class Elevator extends SubsystemBase {
 
   }
 
-  
+  public void setMaxSpeedMode(boolean max) {
+    this.MaxSpeedMode = max;
+  }
+
+  @AutoLogOutput
   public boolean isAtLocation() {
-    return (Math.abs((elevatorEncoder.get()) - targetHeight) < Constants.Elevator.heightTolerance);
+    SmartDashboard.putNumber("Elevator error", Math.abs(getLocation() - targetHeight));
+    return (Math.abs(getLocation() - targetHeight) < Constants.Elevator.heightTolerance);
   }
 
   public boolean GoToTarget(Elevator.Targets target) {
@@ -100,10 +117,12 @@ public class Elevator extends SubsystemBase {
       case AlgaeLow:
         targetHeight = Constants.Elevator.HeightAlgaeLow;
         break;
+      case Intake:
+        targetHeight = Constants.Elevator.IntakeHeight;
+        break;
       default:
         targetHeight = Constants.Elevator.SeaFloorHeight;
     }
-    SmartDashboard.putNumber("Elevator Target Height", targetHeight);
     return goToLocation(targetHeight);
   }
 
@@ -113,38 +132,58 @@ public class Elevator extends SubsystemBase {
     return isAtLocation();
   }
 
+  @AutoLogOutput
   public double getLocation() {
     return -elevatorEncoder.getDistance();
   }
 
+  @AutoLogOutput
   public boolean armClear() {
     return getLocation() >= Constants.Elevator.ArmClearHeight;
   }
 
   public void stop() {
     this.movingToTarget = false;
-    leftMotor.stopMotor();
-    rightMotor.stopMotor();
+    leftMotor.set(Constants.Elevator.gravityFF);
+    //leftMotor.stopMotor();
+    //rightMotor.stopMotor();
   }
 
   public void dunk() {
-    this.targetHeight = this.targetHeight - Constants.Elevator.DunkDistance;
+    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance;
     this.movingToTarget = true;
   }
 
+  public void testUp() {
+    leftMotor.set(Constants.Elevator.testSpeed);
+  }
+  public void testDown() {
+    leftMotor.set(-Constants.Elevator.testSpeed);
+  }
+
+  @AutoLogOutput
+  public double calculateOutput() {
+    double P = ElevatorControl.calculate(getLocation(), targetHeight);
+    P += Constants.Elevator.gravityFF;
+    
+    //if (this.MaxSpeedMode) P = Math.signum(P);
+    if (P > .45) P = .45;
+    if (P < -.15) P = -.15;
+    return P;
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (this.movingToTarget) {
 
-      double P = ElevatorControl.calculate(getLocation(), targetHeight);
-      leftMotor.set(P);
-    } else {
+    if (!this.movingToTarget) {
       stop();
+      return;
     }
-    
 
+
+    
+    leftMotor.set(calculateOutput());  
 
   }
 
