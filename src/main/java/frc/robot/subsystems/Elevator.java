@@ -55,7 +55,7 @@ public class Elevator extends SubsystemBase {
         new SparkMax(
             Constants.Elevator.rightMotor,
             com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    ElevatorControl = new PIDMint(0.00008, 0, 0, 50, .1);
+    ElevatorControl = new PIDMint(0.00008, 0, 0, 50, .08);
     leftMotorConfig = new SparkMaxConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kBrake);
@@ -82,12 +82,10 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput
   public boolean isAtLocation() {
-    SmartDashboard.putNumber("Elevator error", Math.abs(getLocation() - targetHeight));
     return (Math.abs(getLocation() - targetHeight) < Constants.Elevator.heightTolerance);
   }
 
   public boolean GoToTarget(Elevator.Targets target) {
-    SmartDashboard.putString("Elevator Target", target.name());
     double targetHeight = 0; 
     switch (target) {
       case Floor:
@@ -151,6 +149,11 @@ public class Elevator extends SubsystemBase {
 
   public void dunk() {
     this.targetHeight = getLocation() - Constants.Elevator.DunkDistance;
+    this.movingToTarget = true;
+  }
+
+  public void DunkAuto() {
+    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance * 6;
     this.movingToTarget = true;
   }
 

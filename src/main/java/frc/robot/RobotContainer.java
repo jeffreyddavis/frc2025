@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.QuestNav;
 import frc.robot.Constants;
@@ -52,6 +53,8 @@ public class RobotContainer {
 
   public final Vision vision;
 
+  private GyroIOPigeon2 pigeon = new GyroIOPigeon2();
+
   @AutoLogOutput
   public int currentTargetLevel = 4;
 
@@ -72,7 +75,7 @@ public class RobotContainer {
 
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                pigeon,
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
@@ -132,8 +135,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("GoToL4", new GoToL4(theArm, SeaElevator));
     
     NamedCommands.registerCommand("GoToL3", new GoToL3(theArm, SeaElevator));
-    NamedCommands.registerCommand("dunk", new Dunk(AlgaeYoinker, SeaElevator, drive, theArm));
-    NamedCommands.registerCommand("intake", new StationIntake(AlgaeYoinker, theArm, SeaElevator));
+    NamedCommands.registerCommand("dunk", new DunkAuto(AlgaeYoinker, SeaElevator, drive, theArm));
+    NamedCommands.registerCommand("intake", new IntakeAuto(AlgaeYoinker, theArm, SeaElevator));
+    
+    NamedCommands.registerCommand("afterintake", new AfterIntakeAuto(AlgaeYoinker, theArm, SeaElevator));
     NamedCommands.registerCommand("resetQuest", Commands.runOnce(() -> resetInsanity()));
     NamedCommands.registerCommand("Stow", new Stow(theArm, SeaElevator, AlgaeYoinker));
 
@@ -170,7 +175,7 @@ public class RobotContainer {
             drive,
             () -> -m_driverController.getRawAxis(1),
             () -> -m_driverController.getRawAxis(0),
-            () -> -m_driverController.getRawAxis(2)));
+            () -> -(m_driverController.getRawAxis(2) * spinSpeed)));
   }
 
   public void resetInsanity() {
@@ -182,6 +187,17 @@ public class RobotContainer {
     vision.isAllowedToSend = !vision.isAllowedToSend;
   }
 
+  public void resetGyro() {
+    drive.resetGyro();
+  }
+
+  public double spinSpeed = 1;
+  public void spinFast() {
+    spinSpeed = 4;
+  }
+  public void spinNormal() {
+    spinSpeed = 1;
+  }
 
 
   private void configureBindings() {
@@ -199,6 +215,13 @@ public class RobotContainer {
    m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
    
    m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, drive, theArm));
+
+   m_driverController.button(10).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
+
+   m_driverController.button(8).onTrue(Commands.runOnce(() -> pigeon.resetGyro()));//.andThen(Commands.runOnce(() -> resetGyro())));
+
+   m_driverController.button(9)
+            .whileTrue(Commands.runEnd(() -> spinFast(), () -> spinNormal())); 
 
    m_driverController.povUp().onTrue(Commands.runOnce(() -> {
     this.currentTargetLevel+=1;

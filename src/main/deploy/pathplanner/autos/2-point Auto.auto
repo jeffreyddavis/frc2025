@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -23,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToL4"
+                  "name": "GoToL3"
                 }
               }
             ]
@@ -65,9 +71,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "GoToL4"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "afterintake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL3"
+                      }
+                    }
+                  ]
                 }
               }
             ]

@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "resetQuest"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Start To 1st point"

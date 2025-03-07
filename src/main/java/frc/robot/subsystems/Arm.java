@@ -84,8 +84,6 @@ public class Arm extends SubsystemBase {
   public boolean isAtLocation() {
 
     boolean result = (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
-    SmartDashboard.putBoolean("checking is at location", result);
-    SmartDashboard.putNumber("checked at", Timer.getFPGATimestamp());
     return (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
   }
 
@@ -112,7 +110,6 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean goToLocation(double target) {
-    SmartDashboard.putNumber("arm Target", target);
     this.targetAngle = target;
     this.movingToTarget = true;
     return isAtLocation();

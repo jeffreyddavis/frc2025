@@ -14,7 +14,7 @@ public class Stow extends SequentialCommandGroup {
 
     addCommands(
       Commands.runOnce(() -> intake.stop(), intake),
-      Commands.either(Commands.none(),
+     /* Commands.either(Commands.none(),
         Commands.either(
           new SequentialCommandGroup(
             Commands.runOnce(() -> arm.goToLocation(Constants.Arm.CarryAngle), arm),
@@ -29,9 +29,10 @@ public class Stow extends SequentialCommandGroup {
           ),
         () -> elevator.getLocation() < Constants.Elevator.HeightL3)
           ,
-      () -> arm.armDegrees() < Constants.Arm.SafeCarryAngle),
+      () -> arm.armDegrees() < Constants.Arm.SafeCarryAngle), */
   
-      
+      Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm),
+      new WaitUntilCommand(() -> arm.isAtLocation()),  
       Commands.runOnce(() -> elevator.goToLocation(Constants.Elevator.StowHeight), elevator),
       Commands.waitUntil(() -> elevator.isAtLocation()),
       Commands.runOnce(() -> arm.goToLocation(Constants.Arm.Max), arm)   

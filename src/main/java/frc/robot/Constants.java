@@ -71,7 +71,7 @@ public final class Constants {
     public static final double ThrowingAngle = 160;
     public static final double WindUpAngle = 30;
 
-    public static final double ScoringAngle = 135;
+    public static final double ScoringAngle = 138;
     public static final double HighScoringAngle = 150;
     public static final double intakeAngle = 178;
     
@@ -90,6 +90,7 @@ public final class Constants {
     public static final double intakeAlgaeSpeed = 1;
     public static final double shootAlgaeSpeed = -1;
     public static final double shootCoralSpeed = -.35;
+    public static final double shootCoralSpeedAuto = -.7;
     public static final double testSpeed = 1;
     public static final double holdSpeed = .15;
     public static final int intakeLimitSwitchId = 4;
@@ -115,7 +116,7 @@ public final class Constants {
     public static final double DunkDistance = 500;
     public static final double HeightL1 = 250;
     public static final double HeightL2 = 3000;
-    public static final double HeightL3 = 6500;
+    public static final double HeightL3 = 6000;
     public static final double HeightL4 = 10000;
     public static final double HeightNET = 9600;
     public static final double MaxSafeHeight = 3200;

@@ -47,7 +47,6 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
 
-    CameraServer.startAutomaticCapture();
 
     DriverStation.silenceJoystickConnectionWarning(true);
     // Set up data receivers & replay source
@@ -119,9 +118,6 @@ public class Robot extends LoggedRobot {
 
     // Logger.recordOutput("Rooobooot", new Pose3d(robotContainer.drive.getPose()));
 
-    SmartDashboard.putBoolean("Insanity is connected", robotContainer.insanity.isConnected());
-    //SmartDashboard.putNumber("Arm Position", robotContainer.theArm.armDegrees());
-    //SmartDashboard.putNumber("Elevator Position:", robotContainer.SeaElevator.getLocation());
   }
 
   /** This function is called once when the robot is disabled. */
@@ -147,11 +143,14 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-  robotContainer.drive.addVisionMeasurement(
-      robotContainer.insanity.getRobotPose(),
-      Timer.getFPGATimestamp() - .001, 
-      VecBuilder.fill( 1, 1, 1)
-    );
+
+    if (robotContainer.insanity.isConnected()) {
+      robotContainer.drive.addVisionMeasurement(
+          robotContainer.insanity.getRobotPose(),
+          Timer.getFPGATimestamp() - .001, 
+          VecBuilder.fill( 1, 1, 1)
+        );
+    }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -170,14 +169,14 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("FPGA timestamp", Timer.getFPGATimestamp());
-    if (robotContainer.vision.isAllowedToSend) return;
 
-    robotContainer.drive.addVisionMeasurement(
-      robotContainer.insanity.getRobotPose(),
-      Timer.getFPGATimestamp() - .01, 
-      VecBuilder.fill( 1, 1, 1)
-    );
+   // if (robotContainer.insanity.isConnected()) {
+   //   robotContainer.drive.addVisionMeasurement(
+   //       robotContainer.insanity.getRobotPose(),
+   //       Timer.getFPGATimestamp() - .001, 
+   //       VecBuilder.fill( 1, 1, 1)
+   //     );
+   // }
 
   }
 

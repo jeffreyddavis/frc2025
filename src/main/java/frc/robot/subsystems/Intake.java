@@ -81,6 +81,9 @@ public class Intake extends SubsystemBase {
   public void ShootCoral() {
     Motor.set(Constants.Intake.shootCoralSpeed);
   }
+  public void ShootCoralAuto() {
+    Motor.set(Constants.Intake.shootCoralSpeedAuto);
+  }
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *

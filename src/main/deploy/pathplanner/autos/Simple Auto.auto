@@ -7,6 +7,12 @@
         {
           "type": "named",
           "data": {
+            "name": "resetQuest"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "GoToL1"
           }
         },

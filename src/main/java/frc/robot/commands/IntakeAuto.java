@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.*;
 
-public class StationIntake extends SequentialCommandGroup {
+public class IntakeAuto extends SequentialCommandGroup {
 
-  public StationIntake(Intake intake, Arm arm, Elevator elevator) {
+  public IntakeAuto(Intake intake, Arm arm, Elevator elevator) {
 
     addRequirements(intake);
     addCommands(
@@ -23,11 +23,12 @@ public class StationIntake extends SequentialCommandGroup {
 
         Commands.runOnce(() -> arm.goToLocation(Constants.Arm.intakeAngle), arm),
         Commands.runOnce(() -> intake.DoIntake(), intake),
-        Commands.waitUntil(() -> intake.SeesCoral()),
-        Commands.waitSeconds(.8),
-        Commands.runOnce(() -> intake.stop(), intake),
-        Commands.runOnce(() -> arm.goToLocation(Constants.Arm.CarryAngle), arm)
+        Commands.waitUntil(() -> intake.SeesCoral())
       
       );
   }
 }
+//Commands.waitSeconds(.8)
+      
+//Commands.runOnce(() -> intake.stop(), intake),
+//Commands.runOnce(() -> arm.goToLocation(Constants.Arm.CarryAngle), arm)
