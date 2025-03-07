@@ -22,8 +22,7 @@ public class Dunk extends SequentialCommandGroup {
         Commands.waitSeconds(.5),
         Commands.runOnce(() -> intake.stop(), intake),
 
-        Commands.runOnce(() -> drive.stop(), drive),
-        new Stow(arm, elevator, intake)
+        Commands.runOnce(() -> drive.stop(), drive)
 
       )
       , 
@@ -39,8 +38,7 @@ public class Dunk extends SequentialCommandGroup {
         Commands.waitSeconds(.5),
         Commands.runOnce(() -> intake.stop(), intake),
         Commands.runOnce(() -> drive.stop(), drive),
-        Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm),
-        new Stow(arm, elevator, intake)
+        Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm)
         
       ), () -> (elevator.getLocation() <= (Constants.Elevator.HeightL2 - 1000)) 
     ));

@@ -34,6 +34,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import frc.robot.addons.LocalADStarAK;
+import frc.robot.addons.QuestNav;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -117,7 +118,19 @@ public class Robot extends LoggedRobot {
     //Threads.setCurrentThreadPriority(false, 10);
 
     // Logger.recordOutput("Rooobooot", new Pose3d(robotContainer.drive.getPose()));
+    dashCounter++;
+    if (dashCounter >= 25) {
+      updatedashboard();
+      dashCounter = 0;
+    }
 
+  }
+
+  private int dashCounter = 0;
+
+  public void updatedashboard() {
+    SmartDashboard.putNumber("Level", robotContainer.currentTargetLevel);
+    SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.isConnected());
   }
 
   /** This function is called once when the robot is disabled. */

@@ -208,15 +208,15 @@ public class RobotContainer {
 
     m_driverController.button(5).onTrue(new GetLowAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(6).onTrue(new GetHighAlgae(theArm, AlgaeYoinker, SeaElevator));
-    m_driverController.button(7).onTrue(new AlgaeProcessor(theArm, AlgaeYoinker, SeaElevator)); 
+    m_driverController.button(10).onTrue(new AlgaeProcessor(theArm, AlgaeYoinker, SeaElevator)); 
    // m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
 
    m_driverController.button(4).onTrue(new Stow(theArm, SeaElevator, AlgaeYoinker));
    m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
    
-   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, drive, theArm));
+   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, drive, theArm).andThen(new Stow(theArm, SeaElevator, AlgaeYoinker)));
 
-   m_driverController.button(10).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
+   m_driverController.button(7).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
 
    m_driverController.button(8).onTrue(Commands.runOnce(() -> pigeon.resetGyro()));//.andThen(Commands.runOnce(() -> resetGyro())));
 

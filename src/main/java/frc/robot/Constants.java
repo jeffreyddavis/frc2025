@@ -115,8 +115,8 @@ public final class Constants {
     public static final double SeaFloorHeight = 200;
     public static final double DunkDistance = 500;
     public static final double HeightL1 = 250;
-    public static final double HeightL2 = 3000;
-    public static final double HeightL3 = 6000;
+    public static final double HeightL2 = 2700;
+    public static final double HeightL3 = 6100;
     public static final double HeightL4 = 10000;
     public static final double HeightNET = 9600;
     public static final double MaxSafeHeight = 3200;
