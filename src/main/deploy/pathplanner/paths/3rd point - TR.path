@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2560763888888877,
-        "y": 7.015798611111111
+        "x": 1.5175941780821918,
+        "y": 6.9249571917808215
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.289959441604724,
-        "y": 6.288662303156247
+        "x": 2.551477230798028,
+        "y": 6.197820883825957
       },
       "isLocked": false,
       "linkedName": "2nd Score TR"
     },
     {
       "anchor": {
-        "x": 3.7018229166666656,
-        "y": 5.101128472222221
+        "x": 3.5460616438356163,
+        "y": 5.512542808219178
       },
       "prevControl": {
-        "x": 3.3207527408763418,
-        "y": 5.368769410082953
+        "x": 3.2755993150684932,
+        "y": 6.038441780821917
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CoralStationTR"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7546666666666682,
+      "rotationDegrees": -59.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -55,7 +60,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -60.35013649242442
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": null,

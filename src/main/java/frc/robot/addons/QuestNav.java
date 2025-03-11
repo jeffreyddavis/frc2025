@@ -46,7 +46,7 @@ public class QuestNav {
   private Pose2d resetPoseRobot = new Pose2d();
 
   // Position of the quest on the robot (13.5" forward, centered side-to-side, pointed forward))
-  private final Transform2d robotToQuest = new Transform2d(-inchesToMeters(11.5), -inchesToMeters(5), new Rotation2d(Math.PI));
+  private final Transform2d robotToQuest = new Transform2d(-inchesToMeters(11.5), 0, new Rotation2d(Math.PI));
 
   /* Constructor */
   public QuestNav() {
@@ -94,7 +94,22 @@ public class QuestNav {
    * @return true if the Quest is connected
    */
   public boolean isConnected() {
-    return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 250;
+    return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 50;
+  }
+
+  @AutoLogOutput(key = "QuestNav/lastUpdate")
+  public double lastUpdate() {
+    return questBatteryPercent.getLastChange() / 1000000;
+  }
+
+  @AutoLogOutput(key = "QuestNav/Battery")
+  public double Battery() {
+    return questBatteryPercent.get();
+  }
+
+  @AutoLogOutput(key = "QuestNav/FPGATime")
+  public double fpgaTime() {
+    return RobotController.getFPGATime();
   }
 
   /**

@@ -13,7 +13,7 @@ public class StationIntake extends SequentialCommandGroup {
     addRequirements(intake);
     addCommands(
 
-        Commands.either(Commands.none(),
+        Commands.either(Commands.runOnce(() -> arm.goToLocation(Constants.Arm.CarryAngle), arm),
           new SequentialCommandGroup(
             Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm),
             new WaitUntilCommand(() -> arm.isAtLocation())),

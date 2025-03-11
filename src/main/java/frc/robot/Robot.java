@@ -50,6 +50,7 @@ public class Robot extends LoggedRobot {
 
 
     DriverStation.silenceJoystickConnectionWarning(true);
+    CameraServer.startAutomaticCapture();
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
@@ -141,14 +142,19 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {}
 
+  boolean isFirstAuto = false;
+
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
+    robotContainer.drive.allowUpdates = false;
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
+      isFirstAuto = true;
     }
 
   }
@@ -158,11 +164,17 @@ public class Robot extends LoggedRobot {
   public void autonomousPeriodic() {
 
     if (robotContainer.insanity.isConnected()) {
-      robotContainer.drive.addVisionMeasurement(
-          robotContainer.insanity.getRobotPose(),
-          Timer.getFPGATimestamp() - .001, 
-          VecBuilder.fill( 1, 1, 1)
-        );
+
+      if (robotContainer.insanity.getRobotPose().getTranslation().getDistance(robotContainer.drive.getPose().getTranslation()) < .6) {
+        // if less than half a meter, then trust the questnav
+        robotContainer.drive.addVisionMeasurement(
+            robotContainer.insanity.getRobotPose(),
+            Timer.getFPGATimestamp() - .001, 
+            VecBuilder.fill( 1, 1, 1)
+          );
+      } else { // questnav isn't updating. reset it.
+        robotContainer.insanity.resetPose(robotContainer.drive.getPose());
+      }
     }
   }
 

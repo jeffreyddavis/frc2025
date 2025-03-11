@@ -72,8 +72,9 @@ public final class Constants {
     public static final double WindUpAngle = 30;
 
     public static final double ScoringAngle = 138;
-    public static final double HighScoringAngle = 150;
-    public static final double intakeAngle = 178;
+    public static final double HighScoringAngle = 160;
+    //public static final double intakeAngle = 175;
+    public static final double intakeAngle  = 180;
     
     public static final double startingPosition = 172;
     public static final double StraightOut = 85;
@@ -109,7 +110,8 @@ public final class Constants {
     public static final double gravityFF = .075;
 
     public static final double StaticHeight = 0;
-    public static final double IntakeHeight = 250;
+    public static final double IntakeHeight = 200;
+    //public static final double IntakeHeight = 1000;
     public static final double ArmClearHeight = 10;
     public static final double ProcessorHeight = 300;
     public static final double SeaFloorHeight = 200;
@@ -117,7 +119,7 @@ public final class Constants {
     public static final double HeightL1 = 250;
     public static final double HeightL2 = 2700;
     public static final double HeightL3 = 6100;
-    public static final double HeightL4 = 10000;
+    public static final double HeightL4 = 10700;
     public static final double HeightNET = 9600;
     public static final double MaxSafeHeight = 3200;
     public static final double MinSafeHeight = 4200;
