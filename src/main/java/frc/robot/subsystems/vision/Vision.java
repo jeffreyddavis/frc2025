@@ -70,8 +70,7 @@ public class Vision extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {/*
-    return;  //disable for now
+  public void periodic() {
     if (!isAllowedToSend) return;
 
     for (int i = 0; i < io.length; i++) {
@@ -111,14 +110,14 @@ public class Vision extends SubsystemBase {
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-         //       || Math.abs(observation.pose().getZ())
-         //           > maxZError // Must have realistic Z coordinate
+                || Math.abs(observation.pose().getZ())
+                    > maxZError // Must have realistic Z coordinate
 
                 // Must be within the field boundaries
-            //    || observation.pose().getX() < 0.0
-            //    || observation.pose().getX() > aprilTagLayout.getFieldLength()
-            //    || observation.pose().getY() < 0.0
-            //    || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+                || observation.pose().getX() < 0.0
+                || observation.pose().getX() > aprilTagLayout.getFieldLength()
+                || observation.pose().getY() < 0.0
+                || observation.pose().getY() > aprilTagLayout.getFieldWidth()
             ;
 
         // Add pose to log
@@ -186,7 +185,7 @@ public class Vision extends SubsystemBase {
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
 
-         */
+         
   }
 
   @FunctionalInterface

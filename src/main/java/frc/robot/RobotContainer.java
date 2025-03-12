@@ -50,7 +50,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   public final QuestNav insanity = new QuestNav();
   public final Climber CageAscender = new Climber();
-
   public final Drive drive;
 
   public final Vision vision;
@@ -87,9 +86,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 /*new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),*/
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),
                 new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),*/
                 new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation) );
 
@@ -106,13 +105,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-               // new VisionIOPhotonVisionSim(
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+    // new VisionIOPhotonVisionSim(
                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+                //new VisionIOPhotonVisionSim(
+                 //   VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
  
         break;
 
@@ -188,7 +185,7 @@ public class RobotContainer {
     vision.isAllowedToSend = false;
   }
 
-  public void toggleVistion() {
+  public void toggleVision() {
     vision.isAllowedToSend = !vision.isAllowedToSend;
   }
 
@@ -243,8 +240,9 @@ public class RobotContainer {
       .onTrue(new StationIntake(AlgaeYoinker, theArm, SeaElevator));
    
 
-   m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
+   // m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
 
+   m_testController.rightBumper().onTrue(new AlignToReefTagRelative(true, drive));
    m_testController.y().whileTrue(Commands.run(() -> SeaElevator.testUp(), theArm));
    m_testController.x().whileTrue(Commands.run(() -> SeaElevator.testDown(), theArm));
   

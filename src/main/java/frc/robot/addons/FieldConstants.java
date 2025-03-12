@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
  * Contains various field dimensions and useful reference points. All units are in meters and poses
  * have a blue alliance origin.
  */
+
 public class FieldConstants {
   public static final FieldType fieldType = FieldType.WELDED;
 
@@ -79,8 +83,10 @@ public class FieldConstants {
 
     public static final Pose2d[] centerFaces =
         new Pose2d[6]; // Starting facing the driver station in clockwise order
+    @AutoLogOutput
     public static final List<Map<ReefLevel, Pose3d>> branchPositions =
         new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
+    @AutoLogOutput
     public static final List<Map<ReefLevel, Pose2d>> branchPositions2d = new ArrayList<>();
 
     static {

@@ -35,6 +35,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import frc.robot.addons.LocalADStarAK;
 import frc.robot.addons.QuestNav;
+import frc.robot.addons.FieldConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -125,6 +126,8 @@ public class Robot extends LoggedRobot {
       dashCounter = 0;
     }
 
+    
+
   }
 
   private int dashCounter = 0;
@@ -132,6 +135,8 @@ public class Robot extends LoggedRobot {
   public void updatedashboard() {
     SmartDashboard.putNumber("Level", robotContainer.currentTargetLevel);
     SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.isConnected());
+    Logger.recordOutput("algae", FieldConstants.algaeDiameter);
+    Logger.recordOutput("Branch", FieldConstants.Reef.branchPositions2d.get(4).get(1));
   }
 
   /** This function is called once when the robot is disabled. */
