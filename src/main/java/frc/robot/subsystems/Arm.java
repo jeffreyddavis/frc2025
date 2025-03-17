@@ -97,7 +97,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void dunk() {
-    this.targetAngle = armDegrees() - 30;
+    this.targetAngle = armDegrees() - 40;
     this.movingToTarget = true;
   }
 

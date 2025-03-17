@@ -35,6 +35,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import frc.robot.addons.LocalADStarAK;
 import frc.robot.addons.QuestNav;
+import frc.robot.addons.ScoringLocations;
 import frc.robot.addons.FieldConstants;
 
 /**
@@ -51,7 +52,6 @@ public class Robot extends LoggedRobot {
 
 
     DriverStation.silenceJoystickConnectionWarning(true);
-    CameraServer.startAutomaticCapture();
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
@@ -101,6 +101,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     Pathfinding.setPathfinder(new LocalADStarAK());
+    ScoringLocations.initScoringLocations();
   }
 
   /** This function is called periodically during all modes. */

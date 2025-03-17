@@ -1,256 +1,125 @@
-// Copyright (c) 2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by an MIT-style
-// license that can be found in the LICENSE file at
-// the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import org.littletonrobotics.junction.AutoLogOutput;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import lombok.Getter;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.Constants;
+import frc.robot.addons.LimelightHelpers;
+import frc.robot.addons.PIDMint;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.GeomUtil;
-import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveToPose extends Command {
-  private static final LoggedTunableNumber drivekP = new LoggedTunableNumber("DriveToPose/DrivekP");
-  private static final LoggedTunableNumber drivekD = new LoggedTunableNumber("DriveToPose/DrivekD");
-  private static final LoggedTunableNumber thetakP = new LoggedTunableNumber("DriveToPose/ThetakP");
-  private static final LoggedTunableNumber thetakD = new LoggedTunableNumber("DriveToPose/ThetakD");
-  private static final LoggedTunableNumber driveMaxVelocity =
-      new LoggedTunableNumber("DriveToPose/DriveMaxVelocity");
-  private static final LoggedTunableNumber driveMaxVelocitySlow =
-      new LoggedTunableNumber("DriveToPose/DriveMaxVelocitySlow");
-  private static final LoggedTunableNumber driveMaxAcceleration =
-      new LoggedTunableNumber("DriveToPose/DriveMaxAcceleration");
-  private static final LoggedTunableNumber thetaMaxVelocity =
-      new LoggedTunableNumber("DriveToPose/ThetaMaxVelocity");
-  private static final LoggedTunableNumber thetaMaxAcceleration =
-      new LoggedTunableNumber("DriveToPose/ThetaMaxAcceleration");
-  private static final LoggedTunableNumber driveTolerance =
-      new LoggedTunableNumber("DriveToPose/DriveTolerance");
-  private static final LoggedTunableNumber thetaTolerance =
-      new LoggedTunableNumber("DriveToPose/ThetaTolerance");
-  private static final LoggedTunableNumber ffMinRadius =
-      new LoggedTunableNumber("DriveToPose/FFMinRadius");
-  private static final LoggedTunableNumber ffMaxRadius =
-      new LoggedTunableNumber("DriveToPose/FFMaxRadius");
+  private PIDMint xController, yController, rotController;
+  private Timer dontSeeTagTimer, stopTimer;
+  private Drive drive;
+  private boolean m_extraTolerance;
+  @AutoLogOutput
+  private Pose2d m_targetPose2d;
+  private CommandJoystick m_driverController;
 
-  static {
-    drivekP.initDefault(0.8);
-    drivekD.initDefault(0.0);
-    thetakP.initDefault(4.0);
-    thetakD.initDefault(0.0);
-    driveMaxVelocity.initDefault(3.8);
-    driveMaxAcceleration.initDefault(3.0);
-    thetaMaxVelocity.initDefault(Units.degreesToRadians(360.0));
-    thetaMaxAcceleration.initDefault(8.0);
-    driveTolerance.initDefault(0.01);
-    thetaTolerance.initDefault(Units.degreesToRadians(1.0));
-    ffMinRadius.initDefault(0.05);
-    ffMaxRadius.initDefault(0.1);
-  }
-
-  ChassisSpeeds fieldVelocity;
-
-  private final Drive drive;
-  private final Supplier<Pose2d> target;
-
-  private final ProfiledPIDController driveController =
-      new ProfiledPIDController(
-          0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(0.0, 0.0));
-  private final ProfiledPIDController thetaController =
-      new ProfiledPIDController(
-          0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(0.0, 0.0));
-
-  private Translation2d lastSetpointTranslation = new Translation2d();
-  private double driveErrorAbs = 0.0;
-  private double thetaErrorAbs = 0.0;
-  @Getter private boolean running = false;
-  private Supplier<Pose2d> robot;
-
-  private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
-  private DoubleSupplier omegaFF = () -> 0.0;
-
-  public DriveToPose(Drive drive, Supplier<Pose2d> target) {
+  public DriveToPose(Pose2d targetPose2d, Drive drive, CommandJoystick driverController, boolean extraTolerance) {
+    m_targetPose2d = targetPose2d;
+    m_driverController = driverController;
+    m_extraTolerance = extraTolerance;
+    xController = new PIDMint(Constants.Limelight.X_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT, 0);  // Vertical movement
+    yController = new PIDMint(Constants.Limelight.Y_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT, 0);  // Horitontal movement
+    rotController = new PIDMint(Constants.Limelight.ROT_REEF_ALIGNMENT_P, .03, 0, Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT, 0);  // Rotation
     this.drive = drive;
-    this.fieldVelocity = drive.getChassisSpeeds();
-    this.target = target;
-
-    // Enable continuous input for theta controller
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
     addRequirements(drive);
-  }
-
-  public DriveToPose(Drive drive, Supplier<Pose2d> target, Supplier<Pose2d> robot) {
-    this(drive, target);
-    this.robot = robot;
-  }
-
-  public DriveToPose(
-      Drive drive,
-      Supplier<Pose2d> target,
-      Supplier<Pose2d> robot,
-      Supplier<Translation2d> linearFF,
-      DoubleSupplier omegaFF) {
-    this(drive, target, robot );
-    this.linearFF = linearFF;
-    this.omegaFF = omegaFF;
   }
 
   @Override
   public void initialize() {
-    Pose2d currentPose = robot.get();
-    Translation2d linearFieldVelocity =
-        new Translation2d(fieldVelocity.vxMetersPerSecond, fieldVelocity.vyMetersPerSecond);
-    driveController.reset(
-        currentPose.getTranslation().getDistance(target.get().getTranslation()),
-        Math.min(
-            0.0,
-            -linearFieldVelocity
-                .rotateBy(
-                    target
-                        .get()
-                        .getTranslation()
-                        .minus(currentPose.getTranslation())
-                        .getAngle()
-                        .unaryMinus())
-                .getX()));
-    thetaController.reset(
-        currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
-    lastSetpointTranslation = currentPose.getTranslation();
+    this.stopTimer = new Timer(); 
+    this.stopTimer.start();
+    this.dontSeeTagTimer = new Timer();
+    this.dontSeeTagTimer.start();
+
+    rotController.setSetpoint(m_targetPose2d.getRotation().getDegrees());
+    
+    SmartDashboard.putNumber("Target Rot", m_targetPose2d.getRotation().getDegrees());
+    if (m_extraTolerance) rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT * 3);
+    else rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT);
+    rotController.enableContinuousInput(-180, 180);
+ 
+    xController.setSetpoint(m_targetPose2d.getX());
+    SmartDashboard.putNumber("Target X", m_targetPose2d.getX());
+    if (m_extraTolerance) xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * 3);
+    else xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT);
+
+
+    
+    SmartDashboard.putNumber("Target Y", m_targetPose2d.getY());
+    yController.setSetpoint(m_targetPose2d.getY());
+
+    if (m_extraTolerance) yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*3);
+    else yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT);
+
+    
+    SmartDashboard.putString("Ended", "nope");
   }
 
   @Override
   public void execute() {
-    running = true;
+      
+      this.dontSeeTagTimer.reset();
 
-    // Update from tunable numbers
-    if (driveMaxVelocity.hasChanged(hashCode())
-        || driveMaxVelocitySlow.hasChanged(hashCode())
-        || driveMaxAcceleration.hasChanged(hashCode())
-        || driveTolerance.hasChanged(hashCode())
-        || thetaMaxVelocity.hasChanged(hashCode())
-        || thetaMaxAcceleration.hasChanged(hashCode())
-        || thetaTolerance.hasChanged(hashCode())
-        || drivekP.hasChanged(hashCode())
-        || drivekD.hasChanged(hashCode())
-        || thetakP.hasChanged(hashCode())
-        || thetakD.hasChanged(hashCode())) {
-      driveController.setP(drivekP.get());
-      driveController.setD(drivekD.get());
-      driveController.setConstraints(
-          new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
-      driveController.setTolerance(driveTolerance.get());
-      thetaController.setP(thetakP.get());
-      thetaController.setD(thetakD.get());
-      thetaController.setConstraints(
-          new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
-      thetaController.setTolerance(thetaTolerance.get());
-    }
+      Pose2d current = drive.getPose();
 
-    // Get current pose and target pose
-    Pose2d currentPose = robot.get();
-    Pose2d targetPose = target.get();
+      SmartDashboard.putNumber("Current X", current.getX());
+      double xSpeed = xController.calculate(current.getX());
+      SmartDashboard.putNumber("xspeed", xSpeed);
+      
+      SmartDashboard.putNumber("Current Y", current.getY());
+      double ySpeed = -yController.calculate(current.getY());
+      SmartDashboard.putNumber("yspeed", ySpeed);
+      double rotValue = rotController.calculate(current.getRotation().getDegrees());
+      
+      SmartDashboard.putNumber("Current rot", current.getRotation().getDegrees());
+      SmartDashboard.putNumber("rotspeed", rotValue);
 
-    // Calculate drive speed
-    double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-    double ffScaler =
-        MathUtil.clamp(
-            (currentDistance - ffMinRadius.get()) / (ffMaxRadius.get() - ffMinRadius.get()),
-            0.0,
-            1.0);
-    driveErrorAbs = currentDistance;
-    driveController.reset(
-        lastSetpointTranslation.getDistance(targetPose.getTranslation()),
-        driveController.getSetpoint().velocity);
-    double driveVelocityScalar =
-        driveController.getSetpoint().velocity * ffScaler
-            + driveController.calculate(driveErrorAbs, 0.0);
-    if (currentDistance < driveController.getPositionTolerance()) driveVelocityScalar = 0.0;
-    lastSetpointTranslation =
-        new Pose2d(
-                targetPose.getTranslation(),
-                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
-            .transformBy(GeomUtil.toTransform2d(driveController.getSetpoint().position, 0.0))
-            .getTranslation();
+      xSpeed -= m_driverController.getRawAxis(1);
+      ySpeed -= m_driverController.getRawAxis(0);
+      rotValue -= m_driverController.getRawAxis(2);
 
-    // Calculate theta speed
-    double thetaVelocity =
-        thetaController.getSetpoint().velocity * ffScaler
-            + thetaController.calculate(
-                currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
-    thetaErrorAbs =
-        Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
-    if (thetaErrorAbs < thetaController.getPositionTolerance()) thetaVelocity = 0.0;
+      drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, -ySpeed, rotValue, drive.getPose().getRotation()));
 
-    Translation2d driveVelocity =
-        new Pose2d(
-                new Translation2d(),
-                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
-            .transformBy(GeomUtil.toTransform2d(driveVelocityScalar, 0.0))
-            .getTranslation();
-
-    // Scale feedback velocities by input ff
-    final double linearS = linearFF.get().getNorm() * 3.0;
-    final double thetaS = Math.abs(omegaFF.getAsDouble()) * 3.0;
-    driveVelocity =
-        driveVelocity.interpolate(linearFF.get().times(4), linearS);
-    thetaVelocity =
-        MathUtil.interpolate(
-            thetaVelocity, omegaFF.getAsDouble() * .25, thetaS);
-
-    // Command speeds
-    drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
-
-    // Log data
-    Logger.recordOutput("DriveToPose/DistanceMeasured", currentDistance);
-    Logger.recordOutput("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
-    Logger.recordOutput("DriveToPose/ThetaMeasured", currentPose.getRotation().getRadians());
-    Logger.recordOutput("DriveToPose/ThetaSetpoint", thetaController.getSetpoint().position);
-    Logger.recordOutput(
-        "DriveToPose/Setpoint",
-        new Pose2d[] {
-          new Pose2d(
-              lastSetpointTranslation,
-              Rotation2d.fromRadians(thetaController.getSetpoint().position))
-        });
-    Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {targetPose});
+      if (!rotController.atSetpoint() ||
+          !yController.atSetpoint() ||
+          !xController.atSetpoint()) {
+        stopTimer.reset();
+      }
+    
+    SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
   }
 
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putString("Ended", "yep");
     drive.stop();
-    running = false;
-    // Clear logs
-    Logger.recordOutput("DriveToPose/Setpoint", new Pose2d[] {});
-    Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {});
   }
 
-  /** Checks if the robot is stopped at the final pose. */
-  public boolean atGoal() {
-    return running && driveController.atGoal() && thetaController.atGoal();
+  @Override
+  public boolean isFinished() {
+    // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
+    return 
+        stopTimer.hasElapsed(Constants.Limelight.POSE_VALIDATION_TIME) 
+        || Math.abs(m_driverController.getRawAxis(0)) > .5
+        || Math.abs(m_driverController.getRawAxis(1)) > .5
+        || Math.abs(m_driverController.getRawAxis(2)) > .5
+        || m_driverController.button(1).getAsBoolean()
+        ;
   }
-
-  /** Checks if the robot pose is within the allowed drive and theta tolerances. */
-  public boolean withinTolerance(double driveTolerance, Rotation2d thetaTolerance) {
-    return running
-        && Math.abs(driveErrorAbs) < driveTolerance
-        && Math.abs(thetaErrorAbs) < thetaTolerance.getRadians();
-  }
+         
 }

@@ -31,6 +31,7 @@ public class VisionConstants {
   //public static String camera1Name = "ReefCamRight";
   public static String camera2Name = "limelight-reefr";
   public static String camera3Name = "limelight-reefl";
+  public static String camera4Name = "limelight-intake";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -59,7 +60,8 @@ public class VisionConstants {
       //  1.0, // Camera 0
      //   2.0, // Camera 1,
         1.0, // Camera 2,
-        1.0 // Camera 3
+        1.0, // Camera 3,
+        1.2 // Camera 4
       };
 
   // Multipliers to apply for MegaTag 2 observations

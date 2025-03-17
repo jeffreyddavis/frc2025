@@ -17,8 +17,7 @@ public class GoToL4 extends SequentialCommandGroup {
       Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm),
       new WaitUntilCommand(() -> arm.isAtLocation()),
       Commands.runOnce(() -> elevator.goToLocation(Constants.Elevator.HeightL4), elevator),
-      Commands.waitUntil(() -> elevator.isAtLocation()),
-      Commands.runOnce(() -> arm.goToLocation(Constants.Arm.HighScoringAngle), arm)   
+      new WaitUntilCommand(() -> elevator.isAtLocation())
     );
   }
 }

@@ -55,7 +55,7 @@ public class Elevator extends SubsystemBase {
         new SparkMax(
             Constants.Elevator.rightMotor,
             com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-    ElevatorControl = new PIDMint(0.00008, 0, 0, 50, .08);
+    ElevatorControl = new PIDMint(0.00033, 0, .0000001, 50, .08);
     leftMotorConfig = new SparkMaxConfig();
     leftMotorConfig.inverted(false);
     leftMotorConfig.idleMode(IdleMode.kBrake);
@@ -83,6 +83,9 @@ public class Elevator extends SubsystemBase {
   @AutoLogOutput
   public boolean isAtLocation() {
     return (Math.abs(getLocation() - targetHeight) < Constants.Elevator.heightTolerance);
+  }
+  public boolean isNearLocation() {
+    return (Math.abs(getLocation() - targetHeight) < (Constants.Elevator.heightTolerance * 4));
   }
 
   public boolean GoToTarget(Elevator.Targets target) {

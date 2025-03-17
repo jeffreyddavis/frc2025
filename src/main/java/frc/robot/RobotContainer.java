@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Set;
+
 import javax.crypto.SealedObject;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.QuestNav;
+import frc.robot.addons.ScoringLocations;
 import frc.robot.Constants;
 import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
@@ -90,7 +93,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     VisionConstants.camera1Name, VisionConstants.robotToCamera1),*/
                 new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation) );
+                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera4Name, drive::getRotation)
+                 );
 
         break;
 
@@ -142,6 +147,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stow", new Stow(theArm, SeaElevator, AlgaeYoinker));
     NamedCommands.registerCommand("resendPosition", Commands.runOnce(() -> drive.allowUpdates = true));
 
+    NamedCommands.registerCommand("autoScore", Commands.defer(() -> new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
+    NamedCommands.registerCommand("autoIntake", new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -168,6 +175,7 @@ public class RobotContainer {
   private void defaultCommands() {
 
     CageAscender.setDefaultCommand(Commands.run(() -> CageAscender.idle(), CageAscender));
+  //  SeaElevator.setDefaultCommand(Commands.run(() -> SeaElevator.stop(), SeaElevator));
 
 
     drive.setDefaultCommand(
@@ -211,10 +219,12 @@ public class RobotContainer {
     m_driverController.button(5).onTrue(new GetLowAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(6).onTrue(new GetHighAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(10).onTrue(new AlgaeProcessor(theArm, AlgaeYoinker, SeaElevator)); 
-   // m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
+    m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
 
    m_driverController.button(4).onTrue(new Stow(theArm, SeaElevator, AlgaeYoinker));
-   m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
+   m_driverController.button(3).onTrue(Commands.defer(() -> new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController),Set.of(drive, theArm, SeaElevator)));
+   
+   //m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
    
    m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new Stow(theArm, SeaElevator, AlgaeYoinker)));
 
@@ -237,12 +247,13 @@ public class RobotContainer {
 
    m_driverController
       .button(2)
-      .onTrue(new StationIntake(AlgaeYoinker, theArm, SeaElevator));
+      .onTrue(new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
    
+      // isRed:  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
 
    // m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
 
-   m_testController.rightBumper().onTrue(new AlignToReefTagRelative(true, drive));
+   //m_testController.rightBumper().onTrue(new ReefLineUp(drive, theArm, SeaElevator));
    m_testController.y().whileTrue(Commands.run(() -> SeaElevator.testUp(), theArm));
    m_testController.x().whileTrue(Commands.run(() -> SeaElevator.testDown(), theArm));
   

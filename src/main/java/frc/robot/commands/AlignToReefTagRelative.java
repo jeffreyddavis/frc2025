@@ -47,23 +47,32 @@ public class AlignToReefTagRelative extends Command {
     yController.setSetpoint(isRightScore ? Constants.Limelight.Y_SETPOINT_REEF_ALIGNMENT : -Constants.Limelight.Y_SETPOINT_REEF_ALIGNMENT);
     yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT);
 
-    tagID = LimelightHelpers.getFiducialID("");
+    tagID = LimelightHelpers.getFiducialID("limelight-reefr");
+    
+    SmartDashboard.putString("started", "yep");
   }
 
   @Override
   public void execute() {
-    if (LimelightHelpers.getTV("") && LimelightHelpers.getFiducialID("") == tagID) {
+    if (LimelightHelpers.getTV("limelight-reefr") && LimelightHelpers.getFiducialID("limelight-reefr") == tagID) {
+      
+    SmartDashboard.putString("Sees Tag", "yep");
       this.dontSeeTagTimer.reset();
 
-      double[] postions = LimelightHelpers.getBotPose_TargetSpace("");
+      double[] postions = LimelightHelpers.getBotPose_TargetSpace("limelight-reefr");
       SmartDashboard.putNumber("x", postions[2]);
 
-      double xSpeed = xController.calculate(postions[2]);
-      SmartDashboard.putNumber("xspee", xSpeed);
-      double ySpeed = -yController.calculate(postions[0]);
-      double rotValue = -rotController.calculate(postions[4]);
+      SmartDashboard.putNumber("y", postions[4]);
 
-      drive.runVelocity(new ChassisSpeeds(xSpeed, ySpeed, rotValue));
+
+      double xSpeed = xController.calculate(postions[2]);
+      SmartDashboard.putNumber("xspeed", xSpeed);
+      double ySpeed = -yController.calculate(postions[0]);
+      SmartDashboard.putNumber("yspeed", xSpeed);
+      double rotValue = -rotController.calculate(postions[4]);
+      SmartDashboard.putNumber("rotspeed", xSpeed);
+
+      drive.runVelocity(new ChassisSpeeds(-xSpeed, -ySpeed, rotValue));
 
       if (!rotController.atSetpoint() ||
           !yController.atSetpoint() ||
@@ -71,6 +80,8 @@ public class AlignToReefTagRelative extends Command {
         stopTimer.reset();
       }
     } else {
+      
+    SmartDashboard.putString("Sees Tag", "nope");
       drive.runVelocity(new ChassisSpeeds(0, 0, 0));
     }
 
@@ -79,6 +90,7 @@ public class AlignToReefTagRelative extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putString("Ended", "yep");
     drive.stop();
   }
 

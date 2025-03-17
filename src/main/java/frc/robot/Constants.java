@@ -101,15 +101,15 @@ public final class Constants {
   public static class Limelight {
   public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
   public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 2;
-  public static final double Y_REEF_ALIGNMENT_P = .1;
-  public static final double Y_SETPOINT_REEF_ALIGNMENT = 4.33;
-  public static final double Y_TOLERANCE_REEF_ALIGNMENT = .2;
-  public static final double ROT_REEF_ALIGNMENT_P = .1;
-  public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
-  public static final double X_TOLERANCE_REEF_ALIGNMENT = .2;
-  public static final double X_REEF_ALIGNMENT_P = .1;
+  public static final double Y_REEF_ALIGNMENT_P = 2;
+  public static final double Y_SETPOINT_REEF_ALIGNMENT = 8;
+  public static final double Y_TOLERANCE_REEF_ALIGNMENT = .019;
+  public static final double ROT_REEF_ALIGNMENT_P = .08;
+  public static final double X_SETPOINT_REEF_ALIGNMENT = -20;
+  public static final double X_TOLERANCE_REEF_ALIGNMENT = .019;
+  public static final double X_REEF_ALIGNMENT_P = 2;
   public static final double DONT_SEE_TAG_WAIT_TIME = .1;
-  public static final double POSE_VALIDATION_TIME = 1;
+  public static final double POSE_VALIDATION_TIME = .1;
   }
 
   public static class Elevator {
@@ -120,8 +120,8 @@ public final class Constants {
     public static final double heightTolerance = 50;
 
     public static final double elevatorSpeed = .3;
-    public static final double testSpeed = .2;
-    public static final double gravityFF = .075;
+    public static final double testSpeed = 1;
+    public static final double gravityFF = .055;
 
     public static final double StaticHeight = 0;
     public static final double IntakeHeight = 200;
@@ -133,7 +133,7 @@ public final class Constants {
     public static final double HeightL1 = 250;
     public static final double HeightL2 = 2700;
     public static final double HeightL3 = 6100;
-    public static final double HeightL4 = 10700;
+    public static final double HeightL4 = 9800;
     public static final double HeightNET = 9600;
     public static final double MaxSafeHeight = 3200;
     public static final double MinSafeHeight = 4200;
