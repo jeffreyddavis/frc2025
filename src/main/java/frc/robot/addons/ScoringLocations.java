@@ -17,11 +17,17 @@ public class ScoringLocations {
     public static Pose2d[]  LineUpLocations = new Pose2d[12];
     public static Pose2d[] RedLineUpLocations = new Pose2d[12];
 
+    public static Pose2d[] CoralLocations = new Pose2d[2];
+    public static Pose2d[] RedCoralLocations = new Pose2d[2];
+
     @AutoLogOutput
     public static Pose2d ActualScoringLocation;
+    public static Pose2d ActualCoralLocation;
     public static boolean hasValidLocation = false;
 
+    @AutoLogOutput
     public static int locationIndex;
+    public static int coralLocationIndex;
 
     public static void initScoringLocations() { // counterclockwise increasing from above
         LineUpLocations[0] = DriverStationLeftLineup;
@@ -45,6 +51,12 @@ public class ScoringLocations {
         for (int x = 0; x<LineUpLocations.length; x++) {
             RedLineUpLocations[x] = FlippingUtil.flipFieldPose(LineUpLocations[x]);
         }
+
+        CoralLocations[0] = BlueCoralRightLineup;
+        CoralLocations[1] = BlueCoralLeftLineup;
+
+        RedCoralLocations[0] = FlippingUtil.flipFieldPose(CoralLocations[0]);
+        RedCoralLocations[1] = FlippingUtil.flipFieldPose(CoralLocations[1]);
         
     }
 
@@ -53,15 +65,25 @@ public class ScoringLocations {
 
         locationIndex--;
         if (locationIndex < 0) locationIndex =11;
-        return isRed ? RedLineUpLocations[locationIndex] : LineUpLocations[locationIndex];
+        Pose2d location = isRed ? RedLineUpLocations[locationIndex] : LineUpLocations[locationIndex];
+        ActualScoringLocation = actualScoringLocation(isRed);
+        return location;
     }
 
     public static Pose2d rotateRight(Drive drive, boolean isRed) {
         if (!hasValidLocation) return drive.getPose();
 
+        
+
         locationIndex++;
         if (locationIndex > 11) locationIndex =0;
-        return isRed ? RedLineUpLocations[locationIndex] : LineUpLocations[locationIndex];
+        Logger.recordOutput("target index", locationIndex);
+
+        Pose2d location = isRed ? RedLineUpLocations[locationIndex] : LineUpLocations[locationIndex];
+        Logger.recordOutput("coral target", location);
+
+        ActualScoringLocation = actualScoringLocation(isRed);
+        return location;
 
     }
 
@@ -98,6 +120,21 @@ public class ScoringLocations {
         Logger.recordOutput("target Location", bestPose);
         ActualScoringLocation = actualScoringLocation(isRed);
         return bestPose;
+    }
+
+    public static Pose2d actualCoralStation(boolean isRed) {
+        Pose2d location;
+        switch (coralLocationIndex) {
+            case 0:
+                location = BlueCoralRight;
+                break;
+            case 1:
+                location = BlueCoralLeft;
+                break;
+            default:
+                location = BlueCoralRight;
+        }
+        return isRed ? FlippingUtil.flipFieldPose(location) : location;
     }
 
     public static Pose2d actualScoringLocation(boolean isRed) {
@@ -189,6 +226,49 @@ public class ScoringLocations {
 
 
 
-    public static Pose2d RedCoralRight = new Pose2d(16.48, 7.17, Rotation2d.fromDegrees(53.7));
-    public static Pose2d RedCoralRightLineup = new Pose2d(16.21, 6.68, Rotation2d.fromDegrees(53.7));
+
+    public static Pose2d BlueCoralRight = new Pose2d(1.56, .55, Rotation2d.fromDegrees(-126));
+    public static Pose2d BlueCoralRightLineup = new Pose2d(2.18, 1.20, Rotation2d.fromDegrees(-126));
+
+    public static Pose2d BlueCoralLeft = new Pose2d(1.56, 7.49, Rotation2d.fromDegrees(126));
+    public static Pose2d BlueCoralLeftLineup = new Pose2d(2.18, 6.93, Rotation2d.fromDegrees(126));
+
+
+
+    public static Pose2d getClosestCoralLocation(Pose2d currentPose2d, boolean isRed) {
+        double bestDistance = 100000;
+        Pose2d bestPose = currentPose2d;
+
+        if (isRed) {
+            for (int x=0; x<RedCoralLocations.length; x++) {
+                double testDistance = currentPose2d.getTranslation().getDistance(RedCoralLocations[x].getTranslation());
+    
+                if (testDistance < bestDistance) {
+                    bestPose = RedCoralLocations[x];
+                    bestDistance = testDistance;
+                    coralLocationIndex = x;
+                    hasValidLocation = true;
+                }
+            } 
+        } else {
+            for (int x=0; x<CoralLocations.length; x++) {
+                double testDistance = currentPose2d.getTranslation().getDistance(CoralLocations[x].getTranslation());
+    
+                if (testDistance < bestDistance) {
+                    bestPose = CoralLocations[x];
+                    bestDistance = testDistance;
+                    coralLocationIndex = x;
+                    hasValidLocation = true;
+                }
+            }
+        }
+        
+
+        Logger.recordOutput("target Location", bestPose);
+        ActualCoralLocation = actualCoralStation(isRed);
+        return bestPose;
+    
+    }
+
+
 }

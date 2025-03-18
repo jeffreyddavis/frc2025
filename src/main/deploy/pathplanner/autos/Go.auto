@@ -21,18 +21,6 @@
           "data": {
             "name": "dunk"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "About the coral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoIntake"
-          }
         }
       ]
     }

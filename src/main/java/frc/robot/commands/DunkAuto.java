@@ -17,9 +17,10 @@ public class DunkAuto extends SequentialCommandGroup {
         Commands.runOnce(() -> intake.ShootCoralAuto(), intake),
         
         //Commands.runOnce(() -> drive.goBackward(.5), drive),
-        Commands.waitSeconds(.4),
+        Commands.waitSeconds(.2),
         Commands.runOnce(() -> intake.stop(), intake),
-        Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm)
+        Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm),
+        Commands.runOnce(() -> elevator.goToLocation(Constants.Elevator.IntakeHeight), intake)
         );
   }
 }

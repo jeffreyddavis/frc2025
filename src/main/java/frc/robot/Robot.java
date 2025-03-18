@@ -154,7 +154,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
 
-    robotContainer.drive.allowUpdates = false;
+    //robotContainer.drive.allowUpdates = false;
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

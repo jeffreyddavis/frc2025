@@ -148,7 +148,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("resendPosition", Commands.runOnce(() -> drive.allowUpdates = true));
 
     NamedCommands.registerCommand("autoScore", Commands.defer(() -> new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
-    NamedCommands.registerCommand("autoIntake", new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
+    NamedCommands.registerCommand("autoIntake", Commands.defer(() -> new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController), Set.of(drive, AlgaeYoinker, theArm, SeaElevator)));
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -245,9 +245,13 @@ public class RobotContainer {
     if (this.currentTargetLevel < 1) this.currentTargetLevel = 4;
    } ).andThen(new GoToTarget(this, theArm, SeaElevator)));
 
+   //m_driverController.povRight().onTrue(Commands.defer(() -> new RotateRight(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
+   //m_driverController.povLeft().onTrue(Commands.defer(() -> new RotateLeft(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
+
    m_driverController
       .button(2)
-      .onTrue(new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
+      //.onTrue(new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
+      .onTrue(new StationIntake(AlgaeYoinker, theArm, SeaElevator));
    
       // isRed:  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
 

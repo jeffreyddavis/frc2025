@@ -55,7 +55,7 @@ public class DriveToPose extends Command {
  
     xController.setSetpoint(m_targetPose2d.getX());
     SmartDashboard.putNumber("Target X", m_targetPose2d.getX());
-    if (m_extraTolerance) xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * 3);
+    if (m_extraTolerance) xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * 6);
     else xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT);
 
 
@@ -63,7 +63,7 @@ public class DriveToPose extends Command {
     SmartDashboard.putNumber("Target Y", m_targetPose2d.getY());
     yController.setSetpoint(m_targetPose2d.getY());
 
-    if (m_extraTolerance) yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*3);
+    if (m_extraTolerance) yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*6);
     else yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT);
 
     
@@ -115,9 +115,9 @@ public class DriveToPose extends Command {
     // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
     return 
         stopTimer.hasElapsed(Constants.Limelight.POSE_VALIDATION_TIME) 
-        || Math.abs(m_driverController.getRawAxis(0)) > .5
-        || Math.abs(m_driverController.getRawAxis(1)) > .5
-        || Math.abs(m_driverController.getRawAxis(2)) > .5
+        || Math.abs(m_driverController.getRawAxis(0)) > .3
+        || Math.abs(m_driverController.getRawAxis(1)) > .3
+        || Math.abs(m_driverController.getRawAxis(2)) > .3
         || m_driverController.button(1).getAsBoolean()
         ;
   }
