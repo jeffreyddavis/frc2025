@@ -181,11 +181,20 @@ public class RobotContainer {
 
 
     drive.setDefaultCommand(
+      Commands.defer(() ->
+      Commands.either(
         DriveCommands.joystickDrive(
+            drive,
+            () -> -m_driverController.getRawAxis(1) * 1.2,
+            () -> -m_driverController.getRawAxis(0) * 1.2,
+            () -> -(m_driverController.getRawAxis(2) * spinSpeed)),
+
+            DriveCommands.joystickDrive(
             drive,
             () -> -m_driverController.getRawAxis(1),
             () -> -m_driverController.getRawAxis(0),
-            () -> -(m_driverController.getRawAxis(2) * spinSpeed)));
+            () -> -(m_driverController.getRawAxis(2) * spinSpeed)),
+            () -> SeaElevator.getLocation() < Constants.Elevator.MaxSafeHeight), Set.of (drive)));
   }
   
 
@@ -252,12 +261,12 @@ public class RobotContainer {
    m_driverController.povUp().onTrue(Commands.runOnce(() -> {
     this.currentTargetLevel+=1;
     if (this.currentTargetLevel > 4) this.currentTargetLevel = 1;
-   } ).andThen(new GoToTarget(this, theArm, SeaElevator)));
+   } ));
 
    m_driverController.povDown().onTrue(Commands.runOnce(() -> {
     this.currentTargetLevel-=1;
     if (this.currentTargetLevel < 1) this.currentTargetLevel = 4;
-   } ).andThen(new GoToTarget(this, theArm, SeaElevator)));
+   } ));
 
    //m_driverController.povRight().onTrue(Commands.defer(() -> new RotateRight(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
    //m_driverController.povLeft().onTrue(Commands.defer(() -> new RotateLeft(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
