@@ -185,8 +185,8 @@ public class RobotContainer {
       Commands.either(
         DriveCommands.joystickDrive(
             drive,
-            () -> -m_driverController.getRawAxis(1) * 1.2,
-            () -> -m_driverController.getRawAxis(0) * 1.2,
+            () -> -m_driverController.getRawAxis(1) * 1,
+            () -> -m_driverController.getRawAxis(0) * 1,
             () -> -(m_driverController.getRawAxis(2) * spinSpeed)),
 
             DriveCommands.joystickDrive(
