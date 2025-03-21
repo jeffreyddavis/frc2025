@@ -74,7 +74,7 @@ public final class Constants {
     public static final double ScoringAngle = 138;
     public static final double HighScoringAngle = 160;
     //public static final double intakeAngle = 175;
-    public static final double intakeAngle  = 180;
+    public static final double intakeAngle  = 190;
     
     public static final double startingPosition = 172;
     public static final double StraightOut = 85;

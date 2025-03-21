@@ -48,26 +48,22 @@ public class DriveToPose extends Command {
 
     rotController.setSetpoint(m_targetPose2d.getRotation().getDegrees());
     
-    SmartDashboard.putNumber("Target Rot", m_targetPose2d.getRotation().getDegrees());
     if (m_extraTolerance) rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT * 3);
     else rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT);
     rotController.enableContinuousInput(-180, 180);
  
     xController.setSetpoint(m_targetPose2d.getX());
-    SmartDashboard.putNumber("Target X", m_targetPose2d.getX());
     if (m_extraTolerance) xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * 6);
     else xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT);
 
 
     
-    SmartDashboard.putNumber("Target Y", m_targetPose2d.getY());
     yController.setSetpoint(m_targetPose2d.getY());
 
     if (m_extraTolerance) yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*6);
     else yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT);
 
     
-    SmartDashboard.putString("Ended", "nope");
   }
 
   @Override
@@ -77,18 +73,12 @@ public class DriveToPose extends Command {
 
       Pose2d current = drive.getPose();
 
-      SmartDashboard.putNumber("Current X", current.getX());
       double xSpeed = xController.calculate(current.getX());
-      SmartDashboard.putNumber("xspeed", xSpeed);
       
-      SmartDashboard.putNumber("Current Y", current.getY());
       double ySpeed = -yController.calculate(current.getY());
-      SmartDashboard.putNumber("yspeed", ySpeed);
       double rotValue = rotController.calculate(current.getRotation().getDegrees());
       
-      SmartDashboard.putNumber("Current rot", current.getRotation().getDegrees());
-      SmartDashboard.putNumber("rotspeed", rotValue);
-
+   
       xSpeed -= m_driverController.getRawAxis(1);
       ySpeed -= m_driverController.getRawAxis(0);
       rotValue -= m_driverController.getRawAxis(2);
@@ -101,12 +91,10 @@ public class DriveToPose extends Command {
         stopTimer.reset();
       }
     
-    SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
   }
 
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("Ended", "yep");
     drive.stop();
   }
 

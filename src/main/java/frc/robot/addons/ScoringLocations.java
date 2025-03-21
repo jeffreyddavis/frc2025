@@ -207,14 +207,14 @@ public class ScoringLocations {
     public static Pose2d DriverStationRight = new Pose2d(3.11, 3.84, Rotation2d.fromDegrees(0));
     public static Pose2d DriverStationRightLineup = new Pose2d(2.85, 3.84, Rotation2d.fromDegrees(0));
 
-    public static Pose2d DriverStationLeft = new Pose2d(3.08, 4.19, Rotation2d.fromDegrees(0));
+    public static Pose2d DriverStationLeft = new Pose2d(3.11, 4.19, Rotation2d.fromDegrees(0));
     public static Pose2d DriverStationLeftLineup = new Pose2d(2.85, 4.19, Rotation2d.fromDegrees(0));
 
 
-    public static Pose2d CoralStationRightRight = new Pose2d(3.93, 2.75, Rotation2d.fromDegrees(60));
+    public static Pose2d CoralStationRightRight = new Pose2d(3.95, 2.73, Rotation2d.fromDegrees(60));
     public static Pose2d CoralStationRightRightLineup = new Pose2d(3.77, 2.55, Rotation2d.fromDegrees(60));
 
-    public static Pose2d CoralStationRightLeft = new Pose2d(3.61, 2.93, Rotation2d.fromDegrees(60));
+    public static Pose2d CoralStationRightLeft = new Pose2d(3.65, 2.89, Rotation2d.fromDegrees(60));
     public static Pose2d CoralStationRightLeftLineup = new Pose2d(3.47, 2.84, Rotation2d.fromDegrees(60));
 
 
@@ -227,8 +227,9 @@ public class ScoringLocations {
 
 
 
-    public static Pose2d BlueCoralRight = new Pose2d(1.56, .55, Rotation2d.fromDegrees(-126));
+    public static Pose2d BlueCoralRight = new Pose2d(1.56, .57, Rotation2d.fromDegrees(-126));
     public static Pose2d BlueCoralRightLineup = new Pose2d(2.18, 1.20, Rotation2d.fromDegrees(-126));
+
 
     public static Pose2d BlueCoralLeft = new Pose2d(1.56, 7.49, Rotation2d.fromDegrees(126));
     public static Pose2d BlueCoralLeftLineup = new Pose2d(2.18, 6.93, Rotation2d.fromDegrees(126));

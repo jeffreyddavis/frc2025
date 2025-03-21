@@ -136,8 +136,8 @@ public class Robot extends LoggedRobot {
   public void updatedashboard() {
     SmartDashboard.putNumber("Level", robotContainer.currentTargetLevel);
     SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.isConnected());
-    Logger.recordOutput("algae", FieldConstants.algaeDiameter);
-    Logger.recordOutput("Branch", FieldConstants.Reef.branchPositions2d.get(4).get(1));
+    SmartDashboard.putBoolean("Auto Reef Lineup", robotContainer.autoTargetReef);
+    SmartDashboard.putBoolean("Auto Coral Lineup", robotContainer.autoTargetCoral);
   }
 
   /** This function is called once when the robot is disabled. */

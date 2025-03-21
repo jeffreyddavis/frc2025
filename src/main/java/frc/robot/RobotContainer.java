@@ -61,6 +61,8 @@ public class RobotContainer {
 
   @AutoLogOutput
   public int currentTargetLevel = 4;
+  public boolean autoTargetReef = true;
+  public boolean autoTargetCoral = false;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandJoystick m_driverController =
@@ -219,10 +221,22 @@ public class RobotContainer {
     m_driverController.button(5).onTrue(new GetLowAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(6).onTrue(new GetHighAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(10).onTrue(new AlgaeProcessor(theArm, AlgaeYoinker, SeaElevator)); 
-    m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
+    //m_driverController.button(7).onTrue(new ThrowAlgae(theArm, AlgaeYoinker, SeaElevator));
 
-   m_driverController.button(4).onTrue(new Stow(theArm, SeaElevator, AlgaeYoinker));
-   m_driverController.button(3).onTrue(Commands.defer(() -> new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController),Set.of(drive, theArm, SeaElevator)));
+    m_driverController.button(4).onTrue(new Stow(theArm, SeaElevator, AlgaeYoinker));
+
+    m_driverController.button(3).onTrue(Commands.defer(
+      () -> Commands.either(new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController), new GoToTarget(this, theArm, SeaElevator), () -> autoTargetReef),
+    Set.of(theArm, SeaElevator) 
+    ));
+
+    m_driverController
+      .button(2)
+      .onTrue(Commands.defer(
+        () -> 
+          Commands.either(new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController),
+          new StationIntake(AlgaeYoinker, theArm, SeaElevator),
+          () -> autoTargetCoral), Set.of(AlgaeYoinker, theArm, SeaElevator)));
    
    //m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
    
@@ -248,10 +262,7 @@ public class RobotContainer {
    //m_driverController.povRight().onTrue(Commands.defer(() -> new RotateRight(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
    //m_driverController.povLeft().onTrue(Commands.defer(() -> new RotateLeft(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
 
-   m_driverController
-      .button(2)
-      //.onTrue(new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController));
-      .onTrue(new StationIntake(AlgaeYoinker, theArm, SeaElevator));
+   
    
       // isRed:  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
 
@@ -281,11 +292,13 @@ public class RobotContainer {
         .pov(180)
         .whileTrue(Commands.run(() -> CageAscender.testUp(), CageAscender));
 
-    
-
     m_driverController
       .button(14)
       .onTrue(new Eject(AlgaeYoinker));
+
+    m_driverController.button(15).onTrue(Commands.defer(() -> Commands.runOnce(() -> this.autoTargetCoral = !this.autoTargetCoral), Set.of(AlgaeYoinker)));
+    m_driverController.button(16).onTrue(Commands.defer(() -> Commands.runOnce(() -> this.autoTargetReef = !this.autoTargetReef), Set.of(AlgaeYoinker)));
+
 
   }
 

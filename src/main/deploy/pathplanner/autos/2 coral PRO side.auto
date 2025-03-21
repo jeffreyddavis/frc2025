@@ -5,28 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "resetQuest"
+            "pathName": "Quick Look"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Start To 1st point"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4"
-                }
-              }
-            ]
+            "name": "autoScore"
           }
         },
         {
@@ -36,22 +23,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ScoreToCoralStation"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              }
-            ]
+            "pathName": "About the coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoIntake"
           }
         },
         {
@@ -59,28 +39,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "2nd point"
+                  "name": "afterintake"
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "afterintake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4"
-                      }
-                    }
-                  ]
+                  "pathName": "ToThe2ndish"
                 }
               }
             ]
@@ -89,13 +56,31 @@
         {
           "type": "named",
           "data": {
+            "name": "autoScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "dunk"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2nd About the Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoIntake"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

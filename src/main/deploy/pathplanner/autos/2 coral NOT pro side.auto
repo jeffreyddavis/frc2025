@@ -5,40 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "resetQuest"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
+            "pathName": "Quick Look - Flipped"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "resendPosition"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Start To 1st point - TR"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4"
-                }
-              }
-            ]
+            "name": "autoScore"
           }
         },
         {
@@ -48,22 +23,40 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "About the coral - Flipped"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoIntake"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "ScoreToCoralStation - TR"
+                  "name": "afterintake"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "intake"
+                  "pathName": "ToThe2ndish - Flipped"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScore"
           }
         },
         {
@@ -73,41 +66,21 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "2nd point - TR"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "afterintake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "2nd About the Coral - Flipped"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoIntake"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
