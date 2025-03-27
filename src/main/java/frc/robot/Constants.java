@@ -119,7 +119,7 @@ public final class Constants {
     public static final int elevatorEncoder = 1;
     public static final double heightTolerance = 50;
 
-    public static final double elevatorSpeed = .3;
+    public static final double elevatorSpeed = .5;
     public static final double testSpeed = 1;
     public static final double gravityFF = .055;
 
@@ -145,25 +145,31 @@ public final class Constants {
     public static final double maxHeight = 4.3;
   }
 
+  /*
+  * Our climber system has been physically changed, so we may need to adjust.
+  *
+  * Or not. That would likely be unnecessary. I don't know.
+  * I'm just trying to make myself write comments so I can use them when I actually need to.
+  *
+  * - Jeff (the smaller one)
+  /*/
+
   public static class Climber {
-    public static final int leftMotor = 22;
-    public static final int rightMotor = 23;
+    public static final int leftMotor = 23;
+    // public static final int rightMotor = 23;
 
-    public static final int Encoder = 0;
-    public static final double angleTolerance = .5;
+    public static final int Encoder = 6;
+    public static final int otherencoder = 7;
+    public static final double Tolerance = 200;
 
-    public static final double Speed = .05;
+    public static final double Speed = 1;
     public static final double rampUpTime = 2;
-    public static final double testSpeed = .8;
+    public static final double testSpeed = 1;
     public static final double holdSpeed = .03;
-    public static final double encoderOffset = .363;
+    public static final double encoderOffset = 0;
 
-    public static final double DownAngle = 0;
-    public static final double ScoringAngle = 135;
-    public static final double ThrowingAngle = 160;
-    public static final double ReleasingAngle = 135;
-    public static final double StraightOut = 80;
-    public static final double Max = 165;
+    public static final double DownHeight = 0;
+    public static final double TopHeight = 7000;
   }
 
   public static class Hopper {

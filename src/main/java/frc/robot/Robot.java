@@ -146,7 +146,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+
+    
+
+  }
 
   boolean isFirstAuto = false;
 

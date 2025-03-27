@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -44,6 +46,7 @@ public class Intake extends SubsystemBase {
     Motor.stopMotor();
   }
 
+  @AutoLogOutput
   public boolean SeesCoral() {
     return !m_IntakeLimitSwitch.get() || !m_IntakeLimitSwitch2.get();
   }

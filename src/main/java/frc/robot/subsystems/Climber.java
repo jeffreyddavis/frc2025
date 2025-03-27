@@ -4,34 +4,43 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public SparkMax LeftMotor;
 
-  public SparkMax RightMotor;
+  // public SparkMax RightMotor;
   public SparkMaxConfig LeftMotorConfig;
-  public SparkMaxConfig RightMotorConfig;
-  // public DutyCycleEncoder ClimberEncoder;
+  // public SparkMaxConfig RightMotorConfig;
+  public Encoder ClimberEncoder;
   public Servo leftServo;
-  public Servo rightServo;
-  private double targetAngle = 0;
+  //public Servo rightServo;
+  @AutoLogOutput
+  private double targetHeight = 0;
+  @AutoLogOutput
   private boolean movingToTarget = false;
 
   public Climber() {
+
+    SmartDashboard.putBoolean("Went to height", false);
+
     LeftMotor =
         new SparkMax(
             Constants.Climber.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
-    RightMotor =
-        new SparkMax(
-            Constants.Climber.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+//    RightMotor =
+//        new SparkMax(
+//            Constants.Climber.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     LeftMotorConfig = new SparkMaxConfig();
     LeftMotorConfig.inverted(true);
@@ -42,17 +51,17 @@ public class Climber extends SubsystemBase {
     LeftMotor.configure(LeftMotorConfig, null, null);
 
     leftServo = new Servo(1);
-    rightServo = new Servo(0);
+   // rightServo = new Servo(0);
 
-    RightMotorConfig = new SparkMaxConfig();
-    RightMotorConfig.inverted(false);
-    RightMotorConfig.idleMode(IdleMode.kBrake);
-    RightMotorConfig.follow(LeftMotor, true);
+    //RightMotorConfig = new SparkMaxConfig();
+    //RightMotorConfig.inverted(false);
+    //RightMotorConfig.idleMode(IdleMode.kBrake);
+    //RightMotorConfig.follow(LeftMotor, true);
     //RightMotorConfig.openLoopRampRate(Constants.Climber.rampUpTime);
 
-    RightMotor.configure(RightMotorConfig, null, null);
+    //RightMotor.configure(RightMotorConfig, null, null);
 
-    // ClimberEncoder = new DutyCycleEncoder(Constants.Climber.Encoder);
+    ClimberEncoder = new Encoder(Constants.Climber.Encoder, Constants.Climber.otherencoder);
   }
 
   /**
@@ -60,23 +69,21 @@ public class Climber extends SubsystemBase {
    *
    * @return a command
    */
-  public boolean isAtLocation() {
-    return (Math.abs(ClimberDegrees() - targetAngle) < Constants.Climber.angleTolerance);
+  @AutoLogOutput
+  public boolean isAtHeight() {
+    return (Math.abs(ClimberHeight() - targetHeight) < Constants.Climber.Tolerance);
+  }
+@AutoLogOutput
+  public double ClimberHeight() {
+    double raw = ClimberEncoder.get() + Constants.Climber.encoderOffset;
+    return raw;
   }
 
-  public double ClimberDegrees() {
-    // double raw = ClimberEncoder.get() + Constants.Climber.encoderOffset;
-    double raw = 0;
-    while (raw < 0) raw += 1;
-    while (raw >= 1) raw -= 1; // max degrees will be 359.9-ish, 360 will be 0
-    return raw * 360;
-  }
-
-  public boolean goToLocation(double target) {
-    this.targetAngle = target;
-    if (isAtLocation()) return true;
+  public void goToHeight(double target) {
+    SmartDashboard.putBoolean("Went to height", true);
+    this.targetHeight = target;
+    SmartDashboard.putNumber("Target height", target);
     this.movingToTarget = true;
-    return false;
   }
 
   public void idle() {
@@ -86,7 +93,7 @@ public class Climber extends SubsystemBase {
 
   public void stop() {
     LeftMotor.stopMotor();
-    RightMotor.stopMotor();
+    // RightMotor.stopMotor();
   }
 
   public void testUp() {
@@ -98,13 +105,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void releaseCage() {
-    rightServo.setPosition(.7);
-    leftServo.setPosition(0);
+    // rightServo.setPosition(.7);
+    leftServo.setPosition(.15);
+    
   }
 
   public void enableClimbing() {
     leftServo.setPosition(1);
-    rightServo.setPosition(0);
+    // rightServo.setPosition(0);
   }
 
   public void hold() {
@@ -125,9 +133,9 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     if (this.movingToTarget) {
-      if (!isAtLocation()) {
-        RightMotor.set(
-            (ClimberDegrees() < targetAngle) ? Constants.Climber.Speed : -Constants.Climber.Speed);
+      if (!isAtHeight()) {
+       LeftMotor.set(
+          (ClimberHeight() < targetHeight) ? Constants.Climber.Speed : -Constants.Climber.Speed);
       } else {
         this.movingToTarget = false;
         stop();

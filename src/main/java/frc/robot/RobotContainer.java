@@ -171,7 +171,10 @@ public class RobotContainer {
     theArm.stop();
     SeaElevator.stop();
     AlgaeYoinker.stop();
-
+    SmartDashboard.putBoolean("Prepared", false);
+    
+    SmartDashboard.putBoolean("after release", false);
+    //CageAscender.idle();
   }
 
   private void defaultCommands() {
@@ -185,8 +188,8 @@ public class RobotContainer {
       Commands.either(
         DriveCommands.joystickDrive(
             drive,
-            () -> -m_driverController.getRawAxis(1) * 1,
-            () -> -m_driverController.getRawAxis(0) * 1,
+            () -> -m_driverController.getRawAxis(1) * 1.05,
+            () -> -m_driverController.getRawAxis(0) * 1.05,
             () -> -(m_driverController.getRawAxis(2) * spinSpeed)),
 
             DriveCommands.joystickDrive(
@@ -201,7 +204,6 @@ public class RobotContainer {
 
   public void resetInsanity() {
     insanity.resetPose(drive.getPose());
-    vision.isAllowedToSend = false;
   }
 
   public void toggleVision() {
@@ -267,6 +269,7 @@ public class RobotContainer {
     this.currentTargetLevel-=1;
     if (this.currentTargetLevel < 1) this.currentTargetLevel = 4;
    } ));
+   
 
    //m_driverController.povRight().onTrue(Commands.defer(() -> new RotateRight(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
    //m_driverController.povLeft().onTrue(Commands.defer(() -> new RotateLeft(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
@@ -275,7 +278,8 @@ public class RobotContainer {
    
       // isRed:  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
 
-   // m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
+   m_testController.rightBumper().whileTrue(Commands.run(() -> CageAscender.releaseCage(), CageAscender));
+   m_testController.leftBumper().onTrue(new Climb(CageAscender));
 
    //m_testController.rightBumper().onTrue(new ReefLineUp(drive, theArm, SeaElevator));
    m_testController.y().whileTrue(Commands.run(() -> SeaElevator.testUp(), theArm));
@@ -284,22 +288,23 @@ public class RobotContainer {
    m_testController.b().whileTrue(Commands.run(() -> theArm.testUp(), theArm));
    
    m_testController.a().whileTrue(Commands.run(() -> theArm.testDown(), theArm));
+   m_testController.povRight().onTrue(new PrepareForClimb(CageAscender));
 
 
-    m_testController
+   m_testController
       .povLeft()
       .whileTrue(Commands.runOnce(() -> drive.runVelocity(new ChassisSpeeds(0, .5, 0)), drive));
 
-    m_testController
-        .povRight()
-        .whileTrue(Commands.run(() -> AlgaeYoinker.holdAlgae(), AlgaeYoinker));
+    //m_testController
+    //    .povRight()
+    //    .whileTrue(Commands.run(() -> AlgaeYoinker.holdAlgae(), AlgaeYoinker));
 
     m_testController
         .pov(0)
-        .whileTrue(Commands.run(() -> CageAscender.testDown(), CageAscender));
+        .whileTrue(Commands.run(() -> CageAscender.testUp(), CageAscender));
     m_testController
         .pov(180)
-        .whileTrue(Commands.run(() -> CageAscender.testUp(), CageAscender));
+        .whileTrue(Commands.run(() -> CageAscender.testDown(), CageAscender));
 
     m_driverController
       .button(14)
@@ -321,6 +326,5 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
-    //return null;
   }
 }

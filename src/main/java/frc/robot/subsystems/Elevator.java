@@ -173,8 +173,8 @@ public class Elevator extends SubsystemBase {
     P += Constants.Elevator.gravityFF;
     
     //if (this.MaxSpeedMode) P = Math.signum(P);
-    if (P > .45) P = .45;
-    if (P < -.15) P = -.15;
+    if (P > .60) P = .60;
+    if (P < -.25) P = -.25;
     return P;
   }
 
