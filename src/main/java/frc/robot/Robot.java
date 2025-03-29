@@ -112,7 +112,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
 
-    robotContainer.cleanupQuestNavMessages();
+    //robotContainer.cleanupQuestNavMessages(); // not doing this right now
     // Return to normal thread priority
     //Threads.setCurrentThreadPriority(false, 10);
 
@@ -131,7 +131,6 @@ public class Robot extends LoggedRobot {
 
   public void updatedashboard() {
     SmartDashboard.putNumber("Level", robotContainer.currentTargetLevel);
-    SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.connected());
     SmartDashboard.putBoolean("Auto Reef Lineup", robotContainer.autoTargetReef);
     SmartDashboard.putBoolean("Auto Coral Lineup", robotContainer.autoTargetCoral);
   }
@@ -163,9 +162,6 @@ public class Robot extends LoggedRobot {
       isFirstAuto = true;
     }
 
-    robotContainer.insanity.resetPose(robotContainer.drive.getPose());
-    robotContainer.insanity.isAllowedToSend = true;
-
   }
 
   /** This function is called periodically during autonomous. */
@@ -188,22 +184,11 @@ public class Robot extends LoggedRobot {
     robotContainer.onStart();
     
 
-    // TODO: These should be removed for comp (will be reset in autonomouse)
-    robotContainer.insanity.resetPose(robotContainer.drive.getPose());
-    robotContainer.insanity.isAllowedToSend = true;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
-   // if (robotContainer.insanity.isConnected()) {
-   //   robotContainer.drive.addVisionMeasurement(
-   //       robotContainer.insanity.getRobotPose(),
-   //       Timer.getFPGATimestamp() - .001, 
-   //       VecBuilder.fill( 1, 1, 1)
-   //     );
-   // }
 
   }
 

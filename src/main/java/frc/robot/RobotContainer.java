@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.addons.QuestNav;
 import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
@@ -42,7 +41,6 @@ public class RobotContainer {
   public final Arm theArm = new Arm(SeaElevator);
   public final Intake AlgaeYoinker = new Intake();
   private final SendableChooser<Command> autoChooser;
-  public final QuestNav insanity = new QuestNav();
   public final Climber CageAscender = new Climber();
   public final Drive drive;
 
@@ -79,7 +77,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         vision =
-            new Vision(this,
+            new Vision(
                 drive::addVisionMeasurement,
                 /*new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0),
@@ -103,7 +101,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        vision = new Vision(this, drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
     // new VisionIOPhotonVisionSim(
                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 //new VisionIOPhotonVisionSim(
@@ -120,7 +118,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(this, drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         break;
     }
@@ -136,7 +134,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake", new IntakeAuto(AlgaeYoinker, theArm, SeaElevator));
     
     NamedCommands.registerCommand("afterintake", new AfterIntakeAuto(AlgaeYoinker, theArm, SeaElevator));
-    NamedCommands.registerCommand("resetQuest", Commands.runOnce(() -> resetInsanity()));
     NamedCommands.registerCommand("Stow", new Stow(theArm, SeaElevator, AlgaeYoinker));
     NamedCommands.registerCommand("resendPosition", Commands.runOnce(() -> drive.allowUpdates = true));
 
@@ -193,11 +190,6 @@ public class RobotContainer {
             () -> SeaElevator.getLocation() < Constants.Elevator.MaxSafeHeight), Set.of (drive)));
   }
   
-
-
-  public void resetInsanity() {
-    insanity.resetPose(drive.getPose());
-  }
 
   public void toggleVision() {
     vision.isAllowedToSend = !vision.isAllowedToSend;
@@ -321,10 +313,6 @@ public class RobotContainer {
 
   // ...
 
-  public void cleanupQuestNavMessages() {
-    insanity.processHeartbeat();
-    insanity.cleanUpQuestNavMessages();
-  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
