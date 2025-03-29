@@ -23,8 +23,8 @@ public class AlignToReefTagRelative extends Command {
   private double tagID = -1;
 
   public AlignToReefTagRelative(boolean isRightScore, Drive drive) {
-    xController = new PIDController(Constants.Limelight.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
-    yController = new PIDController(Constants.Limelight.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
+    xController = new PIDController(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
+    yController = new PIDController(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
     rotController = new PIDController(Constants.Limelight.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
     this.isRightScore = isRightScore;
     this.drive = drive;

@@ -18,11 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -34,9 +30,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import frc.robot.addons.LocalADStarAK;
-import frc.robot.addons.QuestNav;
 import frc.robot.addons.ScoringLocations;
-import frc.robot.addons.FieldConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -117,6 +111,8 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+
+    robotContainer.cleanupQuestNavMessages();
     // Return to normal thread priority
     //Threads.setCurrentThreadPriority(false, 10);
 
@@ -135,7 +131,7 @@ public class Robot extends LoggedRobot {
 
   public void updatedashboard() {
     SmartDashboard.putNumber("Level", robotContainer.currentTargetLevel);
-    SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.isConnected());
+    SmartDashboard.putBoolean("QuestNav connected", robotContainer.insanity.connected());
     SmartDashboard.putBoolean("Auto Reef Lineup", robotContainer.autoTargetReef);
     SmartDashboard.putBoolean("Auto Coral Lineup", robotContainer.autoTargetCoral);
   }
@@ -167,25 +163,16 @@ public class Robot extends LoggedRobot {
       isFirstAuto = true;
     }
 
+    robotContainer.insanity.resetPose(robotContainer.drive.getPose());
+    robotContainer.insanity.isAllowedToSend = true;
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
 
-    if (robotContainer.insanity.isConnected()) {
-
-      if (robotContainer.insanity.getRobotPose().getTranslation().getDistance(robotContainer.drive.getPose().getTranslation()) < .6) {
-        // if less than half a meter, then trust the questnav
-        robotContainer.drive.addVisionMeasurement(
-            robotContainer.insanity.getRobotPose(),
-            Timer.getFPGATimestamp() - .001, 
-            VecBuilder.fill( 1, 1, 1)
-          );
-      } else { // questnav isn't updating. reset it.
-        robotContainer.insanity.resetPose(robotContainer.drive.getPose());
-      }
-    }
+    
   }
 
   /** This function is called once when teleop is enabled. */
@@ -199,6 +186,11 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
     robotContainer.onStart();
+    
+
+    // TODO: These should be removed for comp (will be reset in autonomouse)
+    robotContainer.insanity.resetPose(robotContainer.drive.getPose());
+    robotContainer.insanity.isAllowedToSend = true;
   }
 
   /** This function is called periodically during operator control. */

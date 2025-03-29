@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -101,13 +99,13 @@ public final class Constants {
   public static class Limelight {
   public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
   public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 2;
-  public static final double Y_REEF_ALIGNMENT_P = 2;
+  public static final double TRANSLATION_REEF_ALIGNMENT_P = 1.2;
   public static final double Y_SETPOINT_REEF_ALIGNMENT = 8;
   public static final double Y_TOLERANCE_REEF_ALIGNMENT = .021;
   public static final double ROT_REEF_ALIGNMENT_P = .08;
   public static final double X_SETPOINT_REEF_ALIGNMENT = -20;
   public static final double X_TOLERANCE_REEF_ALIGNMENT = .021;
-  public static final double X_REEF_ALIGNMENT_P = 2;
+  public static final double X_REEF_ALIGNMENT_P = 1.5;
   public static final double DONT_SEE_TAG_WAIT_TIME = .1;
   public static final double POSE_VALIDATION_TIME = .1;
   }

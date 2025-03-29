@@ -10,9 +10,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.addons.PIDMint;
@@ -156,7 +154,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void DunkAuto() {
-    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance * 6;
+    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance * 4;
     this.movingToTarget = true;
   }
 

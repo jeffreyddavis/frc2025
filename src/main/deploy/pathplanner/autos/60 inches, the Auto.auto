@@ -9,6 +9,24 @@
           "data": {
             "pathName": "60 inches"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "60 To the left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "60 to the back"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "60 to the right"
+          }
         }
       ]
     }

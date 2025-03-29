@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -37,8 +39,18 @@ public class QuestNav {
       .subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
   private FloatArraySubscriber questEulerAngles = nt4Table.getFloatArrayTopic("eulerAngles")
       .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-  private DoubleSubscriber questBatteryPercent = nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
+  private IntegerSubscriber questFrameCount = nt4Table.getIntegerTopic("frameCount").subscribe(0);
+   private DoubleSubscriber questBatteryPercent = nt4Table.getDoubleTopic("device/batteryPercent").subscribe(0.0f);
+   private BooleanSubscriber questIsTracking = nt4Table.getBooleanTopic("device/isTracking").subscribe(false);
+   private IntegerSubscriber questTrackingLostCount = nt4Table.getIntegerTopic("device/trackingLostCounter").subscribe(0);
 
+   /** Subscriber for heartbeat requests */
+   private final DoubleSubscriber heartbeatRequestSub = nt4Table.getDoubleTopic("heartbeat/quest_to_robot").subscribe(0.0);
+   /** Publisher for heartbeat responses */
+   private final DoublePublisher heartbeatResponsePub = nt4Table.getDoubleTopic("heartbeat/robot_to_quest").publish();
+   /** Last processed heartbeat request ID */
+   private double lastProcessedHeartbeatId = 0;
+ 
   // Pose of the Quest when the pose was reset
   private Pose2d resetPoseOculus = new Pose2d();
 
@@ -46,7 +58,35 @@ public class QuestNav {
   private Pose2d resetPoseRobot = new Pose2d();
 
   // Position of the quest on the robot (13.5" forward, centered side-to-side, pointed forward))
-  private final Transform2d robotToQuest = new Transform2d(-inchesToMeters(11.5), 0, new Rotation2d(Math.PI));
+  private final Transform2d robotToQuest = new Transform2d(inchesToMeters(-3.25), inchesToMeters(-13.3), new Rotation2d(-Math.toRadians(89)));
+
+   /** Process heartbeat requests from Quest and respond with the same ID */
+   public void processHeartbeat() {
+    double requestId = heartbeatRequestSub.get();
+    // Only respond to new requests to avoid flooding
+    if (requestId > 0 && requestId != lastProcessedHeartbeatId) {
+      heartbeatResponsePub.set(requestId);
+      lastProcessedHeartbeatId = requestId;
+    }
+  }
+
+    public boolean isAllowedToSend = false; // 
+
+    // Gets the current tracking state of the Quest. 
+    public Boolean getTrackingStatus() {
+      return questIsTracking.get();
+    }
+  
+    // Gets the current frame count from the Quest headset.
+    public Long getFrameCount() {
+      return questFrameCount.get();
+    }
+  
+    // Gets the number of tracking lost events since the Quest connected to the robot. 
+    public Long getTrackingLostCounter() {
+      return questTrackingLostCount.get();
+    }
+
 
   /* Constructor */
   public QuestNav() {
@@ -93,8 +133,8 @@ public class QuestNav {
    * 
    * @return true if the Quest is connected
    */
-  public boolean isConnected() {
-    return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 50;
+  public Boolean connected() {
+    return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 250;
   }
 
   @AutoLogOutput(key = "QuestNav/lastUpdate")
@@ -127,8 +167,10 @@ public class QuestNav {
    * 
    * @return the Quest timestamp
    */
-  public double getTimestamp() {
-    return questTimestamp.get();
+
+  @AutoLogOutput
+  public double timestamp() {
+    return questTimestamp.getAtomic().serverTime;
   }
 
   /**

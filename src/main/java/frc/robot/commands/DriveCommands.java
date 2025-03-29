@@ -78,7 +78,7 @@ public class DriveCommands {
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
           // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND*2);
+          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), .16);
           omega = omega * .7;
 
           // Square rotation value for more precise control

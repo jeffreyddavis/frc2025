@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,13 +38,27 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private RobotContainer m_RobotContainer;
 
   @AutoLogOutput
   public boolean isAllowedToSend = true;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  @AutoLogOutput
+  private int noGoodPosesCount = 0;
+  
+  @AutoLogOutput
+  private boolean bolFoundGood = false;
+
+  @AutoLogOutput
+  private boolean sendingQuestData = false;
+
+  @AutoLogOutput
+  private double lastGoodDistance = 0.0;
+
+  public Vision(RobotContainer rob, VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
+    this.m_RobotContainer = rob;
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -72,6 +87,7 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     if (!isAllowedToSend) return;
+    sendingQuestData = false;
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
@@ -84,6 +100,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
+    bolFoundGood = false;
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
@@ -134,6 +151,11 @@ public class Vision extends SubsystemBase {
           continue;
         }
 
+        if (observation.averageTagDistance() <= 2) { // there is at least one good camera observation
+          bolFoundGood = true;
+          lastGoodDistance = observation.averageTagDistance();
+        }
+
         // Calculate standard deviations
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
@@ -172,6 +194,33 @@ public class Vision extends SubsystemBase {
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
+    }
+
+    if (allRobotPosesAccepted.isEmpty() || !bolFoundGood) {
+      noGoodPosesCount++;
+    } else {
+      noGoodPosesCount = 0;
+    }
+    
+
+    if (noGoodPosesCount >= 10 &&  m_RobotContainer.insanity.connected() && m_RobotContainer.insanity.isAllowedToSend) {
+
+      if (m_RobotContainer.insanity.getRobotPose().getTranslation().getDistance(m_RobotContainer.drive.getPose().getTranslation()) < .6) {
+        // if less than half a meter, then trust the questnav
+
+        sendingQuestData = true;
+
+        //consumer.accept(
+        //  m_RobotContainer.insanity.getRobotPose(),
+        //  m_RobotContainer.insanity.timestamp(),
+        //  VecBuilder.fill(.5, .5, 1));
+        
+        
+      } else { // questnav isn't updating. reset it.
+        m_RobotContainer.insanity.resetPose(m_RobotContainer.drive.getPose());
+      }
+    } else if (m_RobotContainer.insanity.connected()) {
+      m_RobotContainer.insanity.resetPose(m_RobotContainer.drive.getPose());
     }
 
     // Log summary data

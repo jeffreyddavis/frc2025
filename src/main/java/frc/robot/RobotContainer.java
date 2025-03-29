@@ -6,38 +6,29 @@ package frc.robot;
 
 import java.util.Set;
 
-import javax.crypto.SealedObject;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.QuestNav;
-import frc.robot.addons.ScoringLocations;
-import frc.robot.Constants;
 import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Elevator.Targets;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -88,7 +79,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         vision =
-            new Vision(
+            new Vision(this,
                 drive::addVisionMeasurement,
                 /*new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0),
@@ -112,7 +103,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(this, drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
     // new VisionIOPhotonVisionSim(
                //     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 //new VisionIOPhotonVisionSim(
@@ -129,7 +120,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(this, drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         break;
     }
@@ -151,6 +142,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("autoScore", Commands.defer(() -> new LineUpGoToTarget(drive, theArm, SeaElevator, this, m_driverController), Set.of(drive, theArm, SeaElevator)));
     NamedCommands.registerCommand("autoIntake", Commands.defer(() -> new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController), Set.of(drive, AlgaeYoinker, theArm, SeaElevator)));
+    NamedCommands.registerCommand("calibrate", DriveCommands.feedforwardCharacterization(drive));
+    NamedCommands.registerCommand("CalibratetheSecond", DriveCommands.wheelRadiusCharacterization(drive));
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -194,8 +187,8 @@ public class RobotContainer {
 
             DriveCommands.joystickDrive(
             drive,
-            () -> -m_driverController.getRawAxis(1),
-            () -> -m_driverController.getRawAxis(0),
+            () -> -m_driverController.getRawAxis(1) * .8,
+            () -> -m_driverController.getRawAxis(0) * .8,
             () -> -(m_driverController.getRawAxis(2) * spinSpeed)),
             () -> SeaElevator.getLocation() < Constants.Elevator.MaxSafeHeight), Set.of (drive)));
   }
@@ -214,12 +207,12 @@ public class RobotContainer {
     drive.resetGyro();
   }
 
-  public double spinSpeed = 1;
+  public double spinSpeed = .8;
   public void spinFast() {
     spinSpeed = 4;
   }
   public void spinNormal() {
-    spinSpeed = 1;
+    spinSpeed = .8;
   }
 
 
@@ -306,6 +299,10 @@ public class RobotContainer {
         .pov(180)
         .whileTrue(Commands.run(() -> CageAscender.testDown(), CageAscender));
 
+    m_driverController.button(11).onTrue(new Climb(CageAscender));
+
+    m_driverController.button(13).onTrue(new PrepareForClimb(CageAscender));
+
     m_driverController
       .button(14)
       .onTrue(new Eject(AlgaeYoinker));
@@ -323,6 +320,11 @@ public class RobotContainer {
    */
 
   // ...
+
+  public void cleanupQuestNavMessages() {
+    insanity.processHeartbeat();
+    insanity.cleanUpQuestNavMessages();
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
