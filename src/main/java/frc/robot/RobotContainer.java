@@ -38,7 +38,7 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 public class RobotContainer {
 
   public final Elevator SeaElevator = new Elevator();
-  public final Arm theArm = new Arm(SeaElevator);
+  public final Arm theArm = new Arm();
   public final Intake AlgaeYoinker = new Intake();
   private final SendableChooser<Command> autoChooser;
   public final Climber CageAscender = new Climber();
@@ -234,14 +234,12 @@ public class RobotContainer {
           new StationIntake(AlgaeYoinker, theArm, SeaElevator),
           () -> autoTargetCoral), Set.of(AlgaeYoinker, theArm, SeaElevator)));
    
-   //m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
-   
    m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new Stow(theArm, SeaElevator, AlgaeYoinker)));
 
    m_driverController.button(7).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
 
-   m_driverController.button(8).onTrue(Commands.runOnce(() -> pigeon.resetGyro()));//.andThen(Commands.runOnce(() -> resetGyro())));
-
+   m_driverController.button(8).onTrue(Commands.runOnce(() -> pigeon.resetGyro()));
+   
    m_driverController.button(9)
             .whileTrue(Commands.runEnd(() -> spinFast(), () -> spinNormal())); 
 

@@ -10,8 +10,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.addons.PIDMint;
@@ -31,22 +29,17 @@ public class Arm extends SubsystemBase {
   @AutoLogOutput
   private boolean movingToTarget = false;
 
-  private Elevator m_elevator;
   private PIDMint armControlMint;
 
 
   @AutoLogOutput
   public boolean MaxSpeedMode = false;
 
-  public Arm(Elevator elevator) {
-    m_elevator = elevator;
+  public Arm() {
     LeftMotor =
         new SparkMax(
             Constants.Arm.leftMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
-    //RightMotor =
-    //    new SparkMax(
-    //        Constants.Arm.rightMotor, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
 
     LeftMotorConfig = new SparkMaxConfig();
     LeftMotorConfig.inverted(false);
@@ -56,24 +49,12 @@ public class Arm extends SubsystemBase {
 
     LeftMotor.configure(LeftMotorConfig, null, null);
 
-    //RightMotorConfig = new SparkMaxConfig();
-    //RightMotorConfig.inverted(false);
-    //RightMotorConfig.idleMode(IdleMode.kBrake);
-    //RightMotorConfig.follow(LeftMotor, true);
-    //RightMotorConfig.openLoopRampRate(Constants.Arm.rampUpTime);
-
-    //RightMotor.configure(RightMotorConfig, null, null);
-
     armEncoder = new DutyCycleEncoder(Constants.Arm.Encoder);
 
     armControlMint = new PIDMint(.007, 0, 0, 0, 0);
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
+  
 
   @AutoLogOutput
   public String CurrentCommand() {
@@ -83,7 +64,6 @@ public class Arm extends SubsystemBase {
   @AutoLogOutput
   public boolean isAtLocation() {
 
-    boolean result = (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
     return (Math.abs(armDegrees() - targetAngle) < Constants.Arm.angleTolerance);
   }
 
@@ -153,15 +133,14 @@ public class Arm extends SubsystemBase {
 
 
     if (!this.movingToTarget) { 
-      //stop();
+      
       return;
     }
 
 
-    //if (m_elevator.armClear() || targetAngle == Constants.Arm.DownAngle || targetAngle == Constants.Arm.startingPosition) {
-      
-      LeftMotor.set(calculateOutput());
-    //}
+     
+    LeftMotor.set(calculateOutput());
+    
         
       
     
