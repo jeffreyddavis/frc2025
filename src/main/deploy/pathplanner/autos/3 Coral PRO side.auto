@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Quick Look"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "LineUpFirstPointPro"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -47,7 +60,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ToThe2ndish"
+                  "pathName": "ToThe3rddish"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
                 }
               }
             ]
@@ -75,6 +94,43 @@
           "type": "named",
           "data": {
             "name": "autoIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "afterintake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ToThe2ndish"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "dunk"
           }
         }
       ]

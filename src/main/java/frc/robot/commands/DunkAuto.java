@@ -12,7 +12,7 @@ public class DunkAuto extends SequentialCommandGroup {
     addRequirements(intake, elevator);
     addCommands(
         Commands.runOnce(() -> arm.dunk(), arm),
-        Commands.waitSeconds(.15),
+        Commands.waitSeconds(.2),
         Commands.runOnce(() -> elevator.DunkAuto(), elevator),
         Commands.runOnce(() -> intake.ShootCoralAuto(), intake),
         

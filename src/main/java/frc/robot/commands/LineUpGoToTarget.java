@@ -19,11 +19,11 @@ public class LineUpGoToTarget  extends SequentialCommandGroup {
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new DriveToPose(ScoringLocations.getClosestScoringLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red),drive, driverController, true),
+                        new DriveToPose(ScoringLocations.getClosestScoringLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red),drive, driverController, 6.0),
                         new GoToTarget(rob, arm, elevator)
                         
                     ),
-                    new DriveToPose(ScoringLocations.ActualScoringLocation, drive, driverController, false)
+                    new DriveToPose(ScoringLocations.ActualScoringLocation, drive, driverController, 1.0)
                 ),
                 Commands.waitUntil(() -> { return 
                     driverController.getRawAxis(0) > .3 || 

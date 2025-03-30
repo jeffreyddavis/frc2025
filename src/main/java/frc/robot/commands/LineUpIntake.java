@@ -18,10 +18,10 @@ public class LineUpIntake extends SequentialCommandGroup {
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new DriveToPose(ScoringLocations.getClosestCoralLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red), drive, driverController, true),
+                        new DriveToPose(ScoringLocations.getClosestCoralLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red), drive, driverController, 6.0),
                         new IntakeAutoNoWait(intake, arm, elevator)
                     ),
-                    new DriveToPose(ScoringLocations.ActualCoralLocation, drive, driverController, false),
+                    new DriveToPose(ScoringLocations.ActualCoralLocation, drive, driverController, 1.0),
                     Commands.waitUntil(() -> intake.SeesCoral())
                 ),
                 Commands.waitUntil(() -> { return 

@@ -7,16 +7,14 @@ import frc.robot.subsystems.*;
 
 public class AfterIntakeAuto extends SequentialCommandGroup {
 
-  public AfterIntakeAuto(Intake intake, Arm arm, Elevator elevator) {
+  public AfterIntakeAuto(Intake intake) {
 
     addRequirements(intake);
     addCommands(
 
       Commands.waitSeconds(.8),
       
-      Commands.runOnce(() -> intake.stop(), intake),
-      Commands.runOnce(() -> arm.goToLocation(Constants.Arm.SafeCarryAngle), arm)
-      
+      Commands.runOnce(() -> intake.stop(), intake)   
     );
   }
 }

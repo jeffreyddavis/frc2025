@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.addons.ScoringLocations;
 import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
@@ -28,6 +29,11 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import com.pathplanner.lib.util.FlippingUtil;
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -127,13 +133,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("GoToL1", new GoToL1(theArm, SeaElevator));
    // NamedCommands.registerCommand("score", new score(AlgaeYoinker));
 
-    NamedCommands.registerCommand("GoToL4", new GoToL4(theArm, SeaElevator));
+    NamedCommands.registerCommand("GoToL4", new GoToL4Auto(theArm, SeaElevator));
     
     NamedCommands.registerCommand("GoToL3", new GoToL3(theArm, SeaElevator));
+    
+    NamedCommands.registerCommand("GoToL2", new GoToL2(theArm, SeaElevator));
     NamedCommands.registerCommand("dunk", new DunkAuto(AlgaeYoinker, SeaElevator, theArm));
     NamedCommands.registerCommand("intake", new IntakeAuto(AlgaeYoinker, theArm, SeaElevator));
     
-    NamedCommands.registerCommand("afterintake", new AfterIntakeAuto(AlgaeYoinker, theArm, SeaElevator));
+    NamedCommands.registerCommand("afterintake", new AfterIntakeAuto(AlgaeYoinker));
     NamedCommands.registerCommand("Stow", new Stow(theArm, SeaElevator, AlgaeYoinker));
     NamedCommands.registerCommand("resendPosition", Commands.runOnce(() -> drive.allowUpdates = true));
 
@@ -141,6 +149,93 @@ public class RobotContainer {
     NamedCommands.registerCommand("autoIntake", Commands.defer(() -> new LineUpIntake(drive, AlgaeYoinker, theArm, SeaElevator, m_driverController), Set.of(drive, AlgaeYoinker, theArm, SeaElevator)));
     NamedCommands.registerCommand("calibrate", DriveCommands.feedforwardCharacterization(drive));
     NamedCommands.registerCommand("CalibratetheSecond", DriveCommands.wheelRadiusCharacterization(drive));
+
+    NamedCommands.registerCommand("LineUpFirstPointPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.Pro1stLineup, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.Pro1stLineup), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );
+
+    NamedCommands.registerCommand("LineUpSecondPointPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightRight, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightRight), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );
+
+    NamedCommands.registerCommand("LineUpThirdPointPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightLeft, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightLeft), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );  
+    
+    NamedCommands.registerCommand("LineUpFourthPointPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightLeft, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightLeft), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );    
+    
+    
+    NamedCommands.registerCommand("LineUpFirstPointNotPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.ProcessorLeft, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.ProcessorLeft), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );
+
+    NamedCommands.registerCommand("LineUpSecondPointNotPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightRight, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightRight), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );
+
+    NamedCommands.registerCommand("LineUpThirdPointNotPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightLeft, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightLeft), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );  
+    
+    NamedCommands.registerCommand("LineUpFourthPointNotPro", 
+      Commands.defer(() -> 
+        Commands.either(
+          new DriveToPose(ScoringLocations.CoralStationRightLeft, drive, m_driverController, 8.0),
+          new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.CoralStationRightLeft), drive, m_driverController, 8.0),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ), Set.of(drive)
+      )
+    );    
+
+
+    
+    
+    
+
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 

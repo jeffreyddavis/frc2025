@@ -19,17 +19,17 @@ public class DriveToPose extends Command {
   private PIDMint xController, yController, rotController;
   private Timer dontSeeTagTimer, stopTimer;
   private Drive drive;
-  private boolean m_extraTolerance;
+  private double m_toleranceLevel;
   @AutoLogOutput
   private Pose2d m_targetPose2d;
   private CommandJoystick m_driverController;
 
-  public DriveToPose(Pose2d targetPose2d, Drive drive, CommandJoystick driverController, boolean extraTolerance) {
+  public DriveToPose(Pose2d targetPose2d, Drive drive, CommandJoystick driverController, double toleranceLevel) {
     m_targetPose2d = targetPose2d;
     m_driverController = driverController;
-    m_extraTolerance = extraTolerance;
-    xController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT, 0);  // Vertical movement
-    yController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT, 0);  // Horitontal movement
+    m_toleranceLevel = toleranceLevel;
+    xController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Vertical movement
+    yController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Horitontal movement
     rotController = new PIDMint(Constants.Limelight.ROT_REEF_ALIGNMENT_P, .03, 0, Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT, 0);  // Rotation
     this.drive = drive;
     addRequirements(drive);
@@ -44,20 +44,18 @@ public class DriveToPose extends Command {
 
     rotController.setSetpoint(m_targetPose2d.getRotation().getDegrees());
     
-    if (m_extraTolerance) rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT * 3);
+    if (m_toleranceLevel >= 2) rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT * (m_toleranceLevel/2));
     else rotController.setTolerance(Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT);
     rotController.enableContinuousInput(-180, 180);
  
     xController.setSetpoint(m_targetPose2d.getX());
-    if (m_extraTolerance) xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * 6);
-    else xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT);
-
+    xController.setTolerance(Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT * m_toleranceLevel);
+    
 
     
     yController.setSetpoint(m_targetPose2d.getY());
 
-    if (m_extraTolerance) yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*6);
-    else yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT);
+    yController.setTolerance(Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel);
 
     
   }

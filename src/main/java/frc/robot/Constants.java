@@ -167,7 +167,7 @@ public final class Constants {
     public static final double encoderOffset = 0;
 
     public static final double DownHeight = 0;
-    public static final double TopHeight = 7000;
+    public static final double TopHeight = 6200;
   }
 
   public static class Hopper {
