@@ -11,7 +11,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LineUpFirstPointNotPro"
+                  "name": "LineUpFirstPointPro"
                 }
               },
               {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "About the coral - Flipped"
+            "pathName": "About the coral"
           }
         },
         {
@@ -60,7 +60,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ToThe2ndish - Flipped"
+                  "pathName": "ToThe2ndish"
                 }
               },
               {
@@ -85,15 +85,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2nd About the Coral - Flipped"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom Lolli Lineup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GetFloorCoral"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "autoIntake"
+            "pathName": "Get Lolli"
           }
         },
         {
@@ -101,21 +114,21 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "ToThe3rddishLolli"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "afterintake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Go"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ToThe3rdish - Flipped"
                 }
               }
             ]

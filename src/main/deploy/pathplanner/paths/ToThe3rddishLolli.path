@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.154,
-        "y": 5.662799657534247
+        "x": 1.6,
+        "y": 2.185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9605794145851747,
-        "y": 6.1510051840775
+        "x": 0.41647070681514164,
+        "y": 2.1102780746680287
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "AfterLolli"
     },
     {
       "anchor": {
-        "x": 2.915,
-        "y": 6.549315068493151
+        "x": 3.1,
+        "y": 2.185
       },
       "prevControl": {
-        "x": 4.069940236187062,
-        "y": 5.630554656977784
+        "x": 3.0078939647364757,
+        "y": 2.5474423620672044
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 2.0,
-    "rotation": 131.0090869015702
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 2.0,
-    "rotation": -119.7448812969422
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

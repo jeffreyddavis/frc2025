@@ -150,6 +150,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("calibrate", DriveCommands.feedforwardCharacterization(drive));
     NamedCommands.registerCommand("CalibratetheSecond", DriveCommands.wheelRadiusCharacterization(drive));
 
+    NamedCommands.registerCommand("FloorCoral", new GetFloorCoral(theArm, AlgaeYoinker, SeaElevator));
+
     NamedCommands.registerCommand("LineUpFirstPointPro", 
       Commands.defer(() -> 
         Commands.either(

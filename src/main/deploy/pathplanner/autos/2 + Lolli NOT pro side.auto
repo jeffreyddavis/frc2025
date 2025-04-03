@@ -85,21 +85,40 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2nd About the Coral - Flipped"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoIntake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GetFloorCoral"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Top Lolli Lineup"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Get Lolli Flipped"
+                }
+              }
+            ]
           }
         },
         {
           "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ToThe3rddishLolliFlipped"
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -109,13 +128,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Go"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ToThe3rdish - Flipped"
+                  "name": "GoToL4"
                 }
               }
             ]
