@@ -11,13 +11,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LineUpFirstPointNotPro"
+                  "name": "GoToL4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToL4"
+                  "name": "LineUpFirstPointNotPro"
                 }
               }
             ]

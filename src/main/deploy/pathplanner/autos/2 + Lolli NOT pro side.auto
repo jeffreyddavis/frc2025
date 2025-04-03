@@ -11,13 +11,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LineUpFirstPointNotPro"
+                  "name": "GoToL4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToL4"
+                  "name": "LineUpFirstPointNotPro"
                 }
               }
             ]
@@ -99,14 +99,14 @@
                 "data": {
                   "pathName": "Top Lolli Lineup"
                 }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Get Lolli Flipped"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Get Lolli Flipped"
           }
         },
         {

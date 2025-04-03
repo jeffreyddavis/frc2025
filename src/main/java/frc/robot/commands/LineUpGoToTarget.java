@@ -19,7 +19,7 @@ public class LineUpGoToTarget  extends SequentialCommandGroup {
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new DriveToPose(ScoringLocations.getClosestScoringLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red),drive, driverController, 6.0),
+                        new DriveToPose(ScoringLocations.getClosestScoringLocation(drive.getPose(), DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red),drive, driverController, 4.0),
                         new GoToTarget(rob, arm, elevator)
                         
                     ),

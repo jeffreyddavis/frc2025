@@ -235,6 +235,9 @@ public class ScoringLocations {
 
     public static Pose2d Pro1stLineup = new Pose2d(5.4, 2.3, Rotation2d.fromDegrees(120));
 
+    public static Pose2d Pro1stLineupFlipped = new Pose2d(5.4, 6.1, Rotation2d.fromDegrees(-120));
+
+
     public static Pose2d getClosestCoralLocation(Pose2d currentPose2d, boolean isRed) {
         double bestDistance = 100000;
         Pose2d bestPose = currentPose2d;

@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -96,6 +97,7 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     Pathfinding.setPathfinder(new LocalADStarAK());
     ScoringLocations.initScoringLocations();
+    CameraServer.startAutomaticCapture();
   }
 
   /** This function is called periodically during all modes. */

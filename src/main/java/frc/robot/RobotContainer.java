@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.ScoringLocations;
 import frc.robot.commands.*;
@@ -196,7 +197,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("LineUpFirstPointNotPro", 
       Commands.defer(() -> 
         Commands.either(
-          new DriveToPose(ScoringLocations.ProcessorLeft, drive, m_driverController, 8.0),
+          new DriveToPose(ScoringLocations.Pro1stLineupFlipped, drive, m_driverController, 8.0),
           new DriveToPose(FlippingUtil.flipFieldPose(ScoringLocations.ProcessorLeft), drive, m_driverController, 8.0),
           () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
         ), Set.of(drive)
@@ -296,12 +297,12 @@ public class RobotContainer {
     drive.resetGyro();
   }
 
-  public double spinSpeed = .8;
+  public double spinSpeed = .9;
   public void spinFast() {
     spinSpeed = 4;
   }
   public void spinNormal() {
-    spinSpeed = .8;
+    spinSpeed = .9;
   }
 
 
@@ -309,7 +310,8 @@ public class RobotContainer {
 
 
      
-
+    new Trigger(DriverStation::isTeleopEnabled)
+      .onTrue(Commands.waitSeconds(100).andThen(new PrepareForClimb(CageAscender)));
 
     m_driverController.button(5).onTrue(new GetLowAlgae(theArm, AlgaeYoinker, SeaElevator));
     m_driverController.button(6).onTrue(new GetHighAlgae(theArm, AlgaeYoinker, SeaElevator));
@@ -331,7 +333,7 @@ public class RobotContainer {
           new StationIntake(AlgaeYoinker, theArm, SeaElevator),
           () -> autoTargetCoral), Set.of(AlgaeYoinker, theArm, SeaElevator)));
    
-   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new Stow(theArm, SeaElevator, AlgaeYoinker)));
+   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new StationIntake(AlgaeYoinker, theArm, SeaElevator)));
 
    m_driverController.button(7).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
 

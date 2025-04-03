@@ -154,7 +154,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void DunkAuto() {
-    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance * 4;
+    this.targetHeight = getLocation() - Constants.Elevator.DunkDistance * 5;
     this.movingToTarget = true;
   }
 
