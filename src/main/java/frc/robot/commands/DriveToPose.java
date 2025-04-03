@@ -28,8 +28,8 @@ public class DriveToPose extends Command {
     m_targetPose2d = targetPose2d;
     m_driverController = driverController;
     m_toleranceLevel = toleranceLevel;
-    xController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Vertical movement
-    yController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P, 1.1, 0, Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Horitontal movement
+    xController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P.get(), 1.1, 0, Constants.Limelight.X_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Vertical movement
+    yController = new PIDMint(Constants.Limelight.TRANSLATION_REEF_ALIGNMENT_P.get(), 1.1, 0, Constants.Limelight.Y_TOLERANCE_REEF_ALIGNMENT*m_toleranceLevel, 0);  // Horitontal movement
     rotController = new PIDMint(Constants.Limelight.ROT_REEF_ALIGNMENT_P, .03, 0, Constants.Limelight.ROT_TOLERANCE_REEF_ALIGNMENT, 0);  // Rotation
     this.drive = drive;
     addRequirements(drive);
