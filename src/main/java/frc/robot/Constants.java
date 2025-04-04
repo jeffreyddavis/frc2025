@@ -102,12 +102,14 @@ public final class Constants {
   public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
   public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 2;
   public static final double Y_REEF_ALIGNMENT_P = 2;
+  //public static final double Y_REEF_ALIGNMENT_P = .05;
   public static final double Y_SETPOINT_REEF_ALIGNMENT = 8;
   public static final double Y_TOLERANCE_REEF_ALIGNMENT = .021;
   public static final double ROT_REEF_ALIGNMENT_P = .08;
   public static final double X_SETPOINT_REEF_ALIGNMENT = -20;
   public static final double X_TOLERANCE_REEF_ALIGNMENT = .021;
   public static final double X_REEF_ALIGNMENT_P = 2;
+  //public static final double X_REEF_ALIGNMENT_P = .05;
   public static final double DONT_SEE_TAG_WAIT_TIME = .1;
   public static final double POSE_VALIDATION_TIME = .1;
   }
@@ -154,23 +156,23 @@ public final class Constants {
   * - Jeff (the smaller one)
   /*/
 
-  public static class Climber {
-    public static final int leftMotor = 23;
-    // public static final int rightMotor = 23;
+    public static class Climber {
+      public static final int leftMotor = 23;
+      // public static final int rightMotor = 23;
 
-    public static final int Encoder = 6;
-    public static final int otherencoder = 7;
-    public static final double Tolerance = 200;
+      public static final int Encoder = 6;
+      public static final int otherencoder = 7;
+      public static final double Tolerance = 200;
 
-    public static final double Speed = 1;
-    public static final double rampUpTime = 2;
-    public static final double testSpeed = 1;
-    public static final double holdSpeed = .03;
-    public static final double encoderOffset = 0;
+      public static final double Speed = 1;
+      public static final double rampUpTime = 2;
+      public static final double testSpeed = 1;
+      public static final double holdSpeed = .03;
+      public static final double encoderOffset = 0;
 
-    public static final double DownHeight = 0;
-    public static final double TopHeight = 7000;
-  }
+      public static final double DownHeight = 0;
+      public static final double TopHeight = 7000;
+    }
 
   public static class Hopper {
     public static final int leftMotor = 20;

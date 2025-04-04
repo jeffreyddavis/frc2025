@@ -15,6 +15,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.addons.QuestNav;
 import frc.robot.addons.ScoringLocations;
@@ -225,7 +227,8 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-
+    new Trigger(DriverStation::isTeleopEnabled)
+       .onTrue(Commands.waitSeconds(100).andThen(new PrepareForClimb(CageAscender)));
      
 
 
@@ -251,7 +254,7 @@ public class RobotContainer {
    
    //m_driverController.button(3).onTrue(new GoToTarget(this, theArm, SeaElevator));
    
-   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new Stow(theArm, SeaElevator, AlgaeYoinker)));
+   m_driverController.button(1).onTrue(new Dunk(AlgaeYoinker, SeaElevator, theArm).andThen(new StationIntake(AlgaeYoinker,theArm , SeaElevator)));
 
    m_driverController.button(7).onTrue(new GetFloorAlgae(theArm, AlgaeYoinker, SeaElevator));
 
@@ -297,7 +300,7 @@ public class RobotContainer {
 
     //m_testController
     //    .povRight()
-    //    .whileTrue(Commands.run(() -> AlgaeYoinker.holdAlgae(), AlgaeYoinker));
+    //    .whileTrue(Commands.run(() -> AlgaeYoinkfer.holdAlgae(), AlgaeYoinker));
 
     m_testController
         .pov(0)
@@ -305,6 +308,12 @@ public class RobotContainer {
     m_testController
         .pov(180)
         .whileTrue(Commands.run(() -> CageAscender.testDown(), CageAscender));
+
+    m_driverController.button(11).onTrue(new Climb(CageAscender));
+
+    m_driverController.button(13).onTrue(new PrepareForClimb(CageAscender));
+
+
 
     m_driverController
       .button(14)
