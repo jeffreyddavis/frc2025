@@ -183,45 +183,45 @@ public class ScoringLocations {
     }
 
 
-    public static Pose2d OtherSideLeft = new Pose2d(5.36, 5.16, Rotation2d.fromDegrees(-120));
+    public static Pose2d OtherSideLeft = new Pose2d(5.347, 5.138, Rotation2d.fromDegrees(-120));
     public static Pose2d OtherSideLeftLineup = new Pose2d(5.75, 5.5, Rotation2d.fromDegrees(-120));
 
-    public static Pose2d OtherSideRight = new Pose2d(5.05, 5.31, Rotation2d.fromDegrees(-120));
+    public static Pose2d OtherSideRight = new Pose2d(5.037, 5.288, Rotation2d.fromDegrees(-120));
     public static Pose2d OtherSideRightLineup = new Pose2d(5.41, 5.63, Rotation2d.fromDegrees(-120));
 
 
-    public static Pose2d CoralStationLeftLeft = new Pose2d(3.93, 5.23, Rotation2d.fromDegrees(-60));
+    public static Pose2d CoralStationLeftLeft = new Pose2d(3.943, 5.208, Rotation2d.fromDegrees(-60));
     public static Pose2d CoralStationLeftLeftLineup = new Pose2d(3.73, 5.62, Rotation2d.fromDegrees(-60));
 
-    public static Pose2d CoralStationLeftRight = new Pose2d(3.66, 5.14, Rotation2d.fromDegrees(-60));
+    public static Pose2d CoralStationLeftRight = new Pose2d(3.673, 5.118, Rotation2d.fromDegrees(-60));
     public static Pose2d CoralStationLeftRightLineup = new Pose2d(3.40, 5.64, Rotation2d.fromDegrees(-60));
 
 
-    public static Pose2d BargeSideRight = new Pose2d(5.85, 4.19, Rotation2d.fromDegrees(180));
+    public static Pose2d BargeSideRight = new Pose2d(5.825, 4.19, Rotation2d.fromDegrees(180));
     public static Pose2d BargeSideRightLineup = new Pose2d(5.99, 4.19, Rotation2d.fromDegrees(180));
 
-    public static Pose2d BargeSideLeft = new Pose2d(5.85, 3.89, Rotation2d.fromDegrees(180));
+    public static Pose2d BargeSideLeft = new Pose2d(5.825, 3.89, Rotation2d.fromDegrees(180));
     public static Pose2d BargeSideLeftLineup = new Pose2d(5.99, 3.89, Rotation2d.fromDegrees(180));
 
 
-    public static Pose2d DriverStationRight = new Pose2d(3.11, 3.84, Rotation2d.fromDegrees(0));
+    public static Pose2d DriverStationRight = new Pose2d(3.135, 3.84, Rotation2d.fromDegrees(0));
     public static Pose2d DriverStationRightLineup = new Pose2d(2.85, 3.84, Rotation2d.fromDegrees(0));
 
-    public static Pose2d DriverStationLeft = new Pose2d(3.11, 4.19, Rotation2d.fromDegrees(0));
+    public static Pose2d DriverStationLeft = new Pose2d(3.135, 4.19, Rotation2d.fromDegrees(0));
     public static Pose2d DriverStationLeftLineup = new Pose2d(2.85, 4.19, Rotation2d.fromDegrees(0));
 
 
-    public static Pose2d CoralStationRightRight = new Pose2d(3.95, 2.73, Rotation2d.fromDegrees(60));
+    public static Pose2d CoralStationRightRight = new Pose2d(3.963, 2.752, Rotation2d.fromDegrees(60));
     public static Pose2d CoralStationRightRightLineup = new Pose2d(3.77, 2.55, Rotation2d.fromDegrees(60));
 
-    public static Pose2d CoralStationRightLeft = new Pose2d(3.65, 2.89, Rotation2d.fromDegrees(60));
+    public static Pose2d CoralStationRightLeft = new Pose2d(3.663, 2.912, Rotation2d.fromDegrees(60));
     public static Pose2d CoralStationRightLeftLineup = new Pose2d(3.47, 2.84, Rotation2d.fromDegrees(60));
 
 
-    public static Pose2d ProcessorLeft = new Pose2d(5.03, 2.74, Rotation2d.fromDegrees(120));
+    public static Pose2d ProcessorLeft = new Pose2d(5.017, 2.762, Rotation2d.fromDegrees(120));
     public static Pose2d ProcessorLeftLineup = new Pose2d(5.17, 2.45, Rotation2d.fromDegrees(120));
 
-    public static Pose2d ProcessorRight = new Pose2d(5.305, 2.93, Rotation2d.fromDegrees(120));
+    public static Pose2d ProcessorRight = new Pose2d(5.292, 2.952, Rotation2d.fromDegrees(120));
     public static Pose2d ProcessorRightLineup = new Pose2d(5.30, 2.93, Rotation2d.fromDegrees(120));
 
 
